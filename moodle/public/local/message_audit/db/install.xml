@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/message_audit/db" VERSION="20251006" COMMENT="Message audit and keyword rules"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="local_message_audit_log" COMMENT="Log of all messages for admin monitoring">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="senderid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="receiverid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="message_text" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="metadata_json" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="flagged" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="reason" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bulk_send" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="senderid" UNIQUE="false" FIELDS="senderid"/>
+        <INDEX NAME="receiverid" UNIQUE="false" FIELDS="receiverid"/>
+        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+        <INDEX NAME="flagged" UNIQUE="false" FIELDS="flagged"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_message_audit_keywords" COMMENT="Keyword rules for flagging or blocking">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="pattern" TYPE="char" LENGTH="500" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="severity" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="flag" SEQUENCE="false"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="flag" SEQUENCE="false" COMMENT="flag, block, notify_admin"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

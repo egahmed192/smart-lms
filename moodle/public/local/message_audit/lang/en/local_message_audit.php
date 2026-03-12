@@ -1,0 +1,13 @@
+$string['pluginname'] = 'Message audit';
+$string['message_log'] = 'Message log';
+$string['view_logs'] = 'View message logs';
+$string['bulk_message'] = 'Send bulk message';
+$string['sender'] = 'Sender';
+$string['receiver'] = 'Receiver';
+$string['time'] = 'Time';
+$string['flagged'] = 'Flagged';
+$string['keyword_rules'] = 'Keyword rules';
+$string['add_keyword'] = 'Add keyword';
+$string['messages_monitored_notice'] = 'All messages are monitored for compliance.';
+$string['no_messages'] = 'No messages found.';
+$string['bulk_sent'] = 'Bulk message sent to {$a} recipients.';

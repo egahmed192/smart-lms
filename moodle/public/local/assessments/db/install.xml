@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/assessments/db" VERSION="20251006" COMMENT="Custom assessments and evaluations"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="local_assessments_student" COMMENT="Student secret code">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="secret_code" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="unique" FIELDS="userid"/>
+        <KEY NAME="secret_code" TYPE="unique" FIELDS="secret_code"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_assessments" COMMENT="Assessment definition">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="publicid" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="public" SEQUENCE="false" COMMENT="public or secretive"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="fullmark" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="weight" TYPE="number" LENGTH="5" DECIMALS="2" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="announcementdate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="assessmentdate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="averagescore" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="publicid" UNIQUE="true" FIELDS="publicid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_assessments_eval" COMMENT="Student evaluation per assessment">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="mark" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="datecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="rank" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="assessmentid" TYPE="foreign" FIELDS="assessmentid" REFTABLE="local_assessments" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="student_assessment" UNIQUE="true" FIELDS="studentid, assessmentid"/>
+        <INDEX NAME="assessmentid" UNIQUE="false" FIELDS="assessmentid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/odoo_sync/db" VERSION="20251006" COMMENT="Odoo sync and license tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="local_odoo_sync_lic" COMMENT="License expiry per user (students from Odoo)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="license_expiry" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Unix timestamp or 0"/>
+        <FIELD NAME="license_status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="active" SEQUENCE="false" COMMENT="active, expired, suspended_by_admin"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="unique" FIELDS="userid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="license_status" UNIQUE="false" FIELDS="license_status"/>
+        <INDEX NAME="license_expiry" UNIQUE="false" FIELDS="license_expiry"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_odoo_sync_map" COMMENT="Moodle user id to Odoo id mapping">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="odoo_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="odoo_type" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="student or parent"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="year_apply_for_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Odoo year id for students"/>
+        <FIELD NAME="standard_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Odoo class/standard id for students"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="unique" FIELDS="userid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="odoo_id_type" UNIQUE="true" FIELDS="odoo_id, odoo_type"/>
+        <INDEX NAME="year_standard" UNIQUE="false" FIELDS="year_apply_for_id, standard_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_odoo_sync_license_audit" COMMENT="Audit log for license enforcement">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="e.g. access_blocked"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_odoo_sync_course_map" COMMENT="Moodle course to Odoo year+class for auto-enrollment">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="year_apply_for_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="standard_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="courseid" TYPE="unique" FIELDS="courseid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="year_standard" UNIQUE="false" FIELDS="year_apply_for_id, standard_id"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/parent_portal/db" VERSION="20251006" COMMENT="Parent-student relationship table"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="local_parent_portal_rel" COMMENT="Parent to student relationship">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="parent_userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="student_userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="active" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="odoo" SEQUENCE="false" COMMENT="odoo or manual"/>
+        <FIELD NAME="odoo_rel_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="parent_userid" TYPE="foreign" FIELDS="parent_userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="student_userid" TYPE="foreign" FIELDS="student_userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_parent" UNIQUE="false" FIELDS="parent_userid"/>
+        <INDEX NAME="idx_student" UNIQUE="false" FIELDS="student_userid"/>
+        <INDEX NAME="parent_student" UNIQUE="true" FIELDS="parent_userid, student_userid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
