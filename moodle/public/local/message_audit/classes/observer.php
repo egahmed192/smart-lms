@@ -20,6 +20,8 @@ class observer {
 
     /**
      * Log message and run keyword rules when a message is sent.
+     * Enforces student–parent restriction: only users with message_student_parent
+     * may send messages between student and parent; otherwise the message is removed.
      *
      * @param \core\event\message_sent $event
      */
@@ -38,13 +40,31 @@ class observer {
 
         $flagged = 0;
         $reason = '';
-        $keywords = $DB->get_records('local_message_audit_keywords', null, 'id ASC');
-        foreach ($keywords as $kw) {
-            if (stripos($messageText, $kw->pattern) !== false) {
-                $flagged = 1;
-                $reason = $kw->pattern;
-                break;
+        $matchedaction = '';
+
+        // Student–parent restriction: only teachers/supervisors (with capability) may send student–parent messages.
+        $studentparentviolation = false;
+        if (local_message_audit_is_student_parent_exchange($senderid, $receiverid)) {
+            $context = \context_system::instance();
+            $sender = $DB->get_record('user', ['id' => $senderid]);
+            if ($sender && !has_capability('local/message_audit:message_student_parent', $context, $sender)) {
+                $studentparentviolation = true;
+                $reason = get_string('student_parent_violation', 'local_message_audit');
             }
+        }
+
+        if (!$studentparentviolation) {
+            $keywords = $DB->get_records('local_message_audit_keywords', null, 'id ASC');
+            foreach ($keywords as $kw) {
+                if (stripos($messageText, $kw->pattern) !== false) {
+                    $flagged = 1;
+                    $reason = $kw->pattern;
+                    $matchedaction = $kw->action ?? 'flag';
+                    break;
+                }
+            }
+        } else {
+            $flagged = 1;
         }
 
         $DB->insert_record('local_message_audit_log', (object)[
@@ -54,10 +74,60 @@ class observer {
             'courseid' => $courseid,
             'contextid' => $event->contextid ?? null,
             'message_text' => $messageText,
-            'metadata_json' => json_encode(['messageid' => $messageid]),
+            'metadata_json' => json_encode(['messageid' => $messageid, 'student_parent_violation' => $studentparentviolation]),
             'flagged' => $flagged,
             'reason' => $reason,
             'bulk_send' => 0,
         ]);
+
+        if ($studentparentviolation) {
+            $DB->delete_records('messages', ['id' => $messageid]);
+        }
+
+        if ($flagged && $matchedaction === 'notify_admin') {
+            self::notify_view_logs_users($senderid, $receiverid, $reason, $messageText);
+        }
+    }
+
+    /**
+     * Send a notification to users with view_logs capability when a message is flagged with notify_admin.
+     */
+    private static function notify_view_logs_users(int $senderid, int $receiverid, string $reason, string $messagepreview): void {
+        global $DB;
+        $context = \context_system::instance();
+        $recipients = get_users_by_capability($context, 'local/message_audit:view_logs', 'u.id, u.lang');
+        if (empty($recipients)) {
+            return;
+        }
+        $sender = $DB->get_record('user', ['id' => $senderid], 'id, firstname, lastname');
+        $receiver = $DB->get_record('user', ['id' => $receiverid], 'id, firstname, lastname');
+        $from = \core_user::get_user(\core_user::NOREPLY_USER);
+        $subject = get_string('message_flagged_notify_subject', 'local_message_audit');
+        $body = get_string('message_flagged_notify_body', 'local_message_audit', (object)[
+            'sender' => $sender ? fullname($sender) : $senderid,
+            'receiver' => $receiver ? fullname($receiver) : $receiverid,
+            'reason' => $reason,
+            'preview' => shorten_text($messagepreview, 200),
+        ]);
+        foreach ($recipients as $u) {
+            if ((int)$u->id === $senderid || (int)$u->id === $receiverid) {
+                continue;
+            }
+            $userto = \core_user::get_user($u->id);
+            $message = new \core\message\message();
+            $message->component = 'local_message_audit';
+            $message->name = 'flagged_notify';
+            $message->userfrom = $from;
+            $message->userto = $userto;
+            $message->subject = $subject;
+            $message->fullmessage = $body;
+            $message->fullmessageformat = FORMAT_PLAIN;
+            $message->fullmessagehtml = '';
+            $message->smallmessage = $body;
+            $message->notification = 1;
+            $message->contexturl = (new \moodle_url('/local/message_audit/index.php'))->out(false);
+            $message->contexturlname = get_string('message_log', 'local_message_audit');
+            message_send($message);
+        }
     }
 }

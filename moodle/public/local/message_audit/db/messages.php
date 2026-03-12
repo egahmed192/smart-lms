@@ -14,7 +14,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100700;
-$plugin->requires  = 2025092600;
-$plugin->component = 'local_odoo_sync';
-$plugin->maturity  = MATURITY_ALPHA;
+$messageproviders = [
+    'flagged_notify' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+        'capability' => 'local/message_audit:view_logs',
+    ],
+    'bulk_send_confirmation' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
+];

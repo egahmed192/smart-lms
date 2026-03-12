@@ -70,5 +70,22 @@
         <INDEX NAME="year_standard" UNIQUE="false" FIELDS="year_apply_for_id, standard_id"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="local_odoo_sync_failures" COMMENT="Sync failures for retry UI">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Moodle user id if known"/>
+        <FIELD NAME="odoo_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="odoo_type" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="student or parent"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="create_user, update_credentials, link_parent"/>
+        <FIELD NAME="error_message" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

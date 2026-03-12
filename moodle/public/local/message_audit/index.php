@@ -54,7 +54,8 @@ echo $OUTPUT->heading(get_string('message_log', 'local_message_audit'));
 global $DB;
 $filterurl = new moodle_url('/local/message_audit/index.php');
 echo html_writer::link(new moodle_url($filterurl, ['flagged' => 1]), get_string('flagged', 'local_message_audit') . ' only') . ' | ';
-echo html_writer::link($filterurl, 'All') . '<br><br>';
+echo html_writer::link($filterurl, 'All') . ' | ';
+echo html_writer::link(new moodle_url('/local/message_audit/keywords.php'), get_string('keyword_rules', 'local_message_audit')) . '<br><br>';
 
 $table = new html_table();
 $table->head = [get_string('time', 'local_message_audit'), get_string('sender', 'local_message_audit'), get_string('receiver', 'local_message_audit'), 'Course', 'Preview', get_string('flagged', 'local_message_audit')];

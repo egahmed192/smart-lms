@@ -15,7 +15,18 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig && has_capability('local/odoo_sync:manage', context_system::instance())) {
+    $ADMIN->add('localplugins', new admin_externalpage(
+        'local_odoo_sync_status',
+        get_string('sync_status', 'local_odoo_sync'),
+        new moodle_url('/local/odoo_sync/status.php'),
+        'local/odoo_sync:manage'
+    ));
     $settings = new admin_settingpage('local_odoo_sync', get_string('pluginname', 'local_odoo_sync'));
+    $settings->add(new admin_setting_description(
+        'local_odoo_sync_statuslink',
+        '',
+        '<a href="' . (new moodle_url('/local/odoo_sync/status.php'))->out(false) . '">' . get_string('sync_status', 'local_odoo_sync') . '</a>'
+    ));
     $settings->add(new admin_setting_configtext(
         'local_odoo_sync/apiurl',
         get_string('odoo_api_url', 'local_odoo_sync'),
@@ -35,6 +46,13 @@ if ($hassiteconfig && has_capability('local/odoo_sync:manage', context_system::i
         get_string('odoo_api_password', 'local_odoo_sync'),
         '',
         ''
+    ));
+    $settings->add(new admin_setting_configtext(
+        'local_odoo_sync/license_expiry_days_before',
+        get_string('license_expiry_days_before', 'local_odoo_sync'),
+        get_string('license_expiry_days_before_help', 'local_odoo_sync'),
+        '7',
+        PARAM_INT
     ));
     $ADMIN->add('localplugins', $settings);
 }

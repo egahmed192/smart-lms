@@ -31,4 +31,14 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
+    'local/message_audit:message_student_parent' => [
+        'riskbitmask' => 0,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 ];

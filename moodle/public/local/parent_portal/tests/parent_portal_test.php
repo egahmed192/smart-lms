@@ -38,4 +38,20 @@ class parent_portal_test extends \advanced_testcase {
         $student = $this->getDataGenerator()->create_user();
         $this->assertFalse(local_parent_portal_is_parent_of($parent->id, $student->id));
     }
+
+    public function test_is_parent_of_true(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $parent = $this->getDataGenerator()->create_user();
+        $student = $this->getDataGenerator()->create_user();
+        $DB->insert_record('local_parent_portal_rel', (object)[
+            'parent_userid' => $parent->id,
+            'student_userid' => $student->id,
+            'active' => 1,
+            'timecreated' => time(),
+            'source' => 'manual',
+        ]);
+        $this->assertTrue(local_parent_portal_is_parent_of($parent->id, $student->id));
+        $this->assertCount(1, local_parent_portal_get_students_for_parent($parent->id));
+    }
 }

@@ -33,4 +33,13 @@ $tasks = [
         'dayofweek' => '*',
         'month' => '*',
     ],
+    [
+        'classname' => 'local_odoo_sync\task\license_expiry_reminder',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '9',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+    ],
 ];

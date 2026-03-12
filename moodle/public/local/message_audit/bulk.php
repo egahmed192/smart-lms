@@ -24,30 +24,20 @@ $PAGE->set_heading(get_string('bulk_message', 'local_message_audit'));
 
 global $DB;
 
-$target = optional_param('target', 'students', PARAM_ALPHA);
+$target = optional_param('target', 'students', PARAM_ALPHAEXT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
+$classkey = optional_param('classkey', '', PARAM_ALPHANUMEXT);
+$cohortid = optional_param('cohortid', 0, PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $message = optional_param('message', '', PARAM_RAW);
 
-$recipients = [];
-if ($target === 'students') {
-    $recipients = $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra JOIN {role} r ON r.id = ra.roleid WHERE r.shortname = 'student'");
-} elseif ($target === 'teachers') {
-    $recipients = $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra JOIN {role} r ON r.id = ra.roleid WHERE r.shortname IN ('teacher', 'editingteacher')");
-} elseif ($target === 'parents') {
-    $recipients = $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra JOIN {role} r ON r.id = ra.roleid WHERE r.shortname = 'parent'");
-} elseif ($target === 'all') {
-    $recipients = $DB->get_fieldset_sql("SELECT id FROM {user} WHERE deleted = 0 AND id > 1");
-}
-if ($courseid > 0) {
-    $enrolled = $DB->get_fieldset_sql("SELECT userid FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid WHERE e.courseid = ?", [$courseid]);
-    $recipients = array_intersect($recipients, $enrolled);
-}
-$recipients = array_values(array_unique(array_filter($recipients)));
+$recipients = local_message_audit_bulk_get_recipients($DB, $target, $courseid, $classkey, $cohortid);
+$recipients = array_values(array_unique(array_filter(array_map('intval', $recipients))));
+$count = count($recipients);
 
-if ($confirm && $message !== '' && confirm_sesskey()) {
+if ($confirm && $message !== '' && confirm_sesskey() && $count > 0) {
     require_once($CFG->dirroot . '/message/lib.php');
-    $count = 0;
+    $sent = 0;
     foreach ($recipients as $recid) {
         if ($recid == $USER->id) {
             continue;
@@ -68,40 +58,251 @@ if ($confirm && $message !== '' && confirm_sesskey()) {
                 'courseid' => $courseid ?: null,
                 'contextid' => null,
                 'message_text' => $message,
-                'metadata_json' => json_encode(['bulk' => true, 'target' => $target]),
+                'metadata_json' => json_encode(['bulk' => true, 'target' => $target, 'classkey' => $classkey, 'cohortid' => $cohortid]),
                 'flagged' => 0,
                 'reason' => null,
                 'bulk_send' => 1,
             ]);
-            $count++;
+            $sent++;
         } catch (\Throwable $e) {
             // Skip failed recipient.
         }
     }
-    redirect(new moodle_url('/local/message_audit/bulk.php'), get_string('bulk_sent', 'local_message_audit', $count), null, \core\output\notification::NOTIFY_SUCCESS);
+    if ($sent > 0) {
+        $msg = new \core\message\message();
+        $msg->component = 'local_message_audit';
+        $msg->name = 'bulk_send_confirmation';
+        $msg->userfrom = \core_user::get_user(\core_user::NOREPLY_USER);
+        $msg->userto = $USER;
+        $msg->subject = get_string('bulk_send_notification', 'local_message_audit', $sent);
+        $msg->fullmessage = get_string('bulk_send_notification', 'local_message_audit', $sent);
+        $msg->fullmessageformat = FORMAT_PLAIN;
+        $msg->smallmessage = get_string('bulk_send_notification', 'local_message_audit', $sent);
+        $msg->notification = 1;
+        message_send($msg);
+    }
+    redirect(new moodle_url('/local/message_audit/bulk.php'), get_string('bulk_sent', 'local_message_audit', $sent), null, \core\output\notification::NOTIFY_SUCCESS);
 }
+
+$classes = local_message_audit_bulk_get_classes($DB);
+$cohorts = local_message_audit_bulk_get_cohorts($DB);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('bulk_message', 'local_message_audit'));
 
-$form = '<form method="get" action="bulk.php">';
-$form .= '<label>Target: </label><select name="target"><option value="students"' . ($target === 'students' ? ' selected' : '') . '>Students</option>';
-$form .= '<option value="teachers"' . ($target === 'teachers' ? ' selected' : '') . '>Teachers</option>';
-$form .= '<option value="parents"' . ($target === 'parents' ? ' selected' : '') . '>Parents</option>';
-$form .= '<option value="all"' . ($target === 'all' ? ' selected' : '') . '>All users</option></select> ';
-$form .= '<label>Course (optional): </label><input type="number" name="courseid" value="' . s($courseid) . '" min="0"> ';
-$form .= '<button type="submit">Update count</button></form>';
-echo $form;
+echo '<form method="get" action="bulk.php" class="mb-3">';
+echo '<div class="mb-2"><label class="me-2">' . get_string('target', 'local_message_audit') . '</label>';
+echo '<select name="target" id="bulk-target" class="form-select d-inline-block w-auto">';
+$targets = [
+    'students' => get_string('target_students', 'local_message_audit'),
+    'teachers' => get_string('target_teachers', 'local_message_audit'),
+    'parents' => get_string('target_parents', 'local_message_audit'),
+    'all' => get_string('target_all', 'local_message_audit'),
+    'class_students' => get_string('target_class_students', 'local_message_audit'),
+    'class_teachers' => get_string('target_class_teachers', 'local_message_audit'),
+    'class_all' => get_string('target_class_all', 'local_message_audit'),
+    'cohort' => get_string('target_cohort', 'local_message_audit'),
+    'parents_of_class' => get_string('target_parents_of_class', 'local_message_audit'),
+];
+foreach ($targets as $t => $label) {
+    echo '<option value="' . s($t) . '"' . ($target === $t ? ' selected' : '') . '>' . $label . '</option>';
+}
+echo '</select></div>';
 
-echo '<p>Recipients: ' . count($recipients) . '</p>';
+echo '<div class="mb-2" id="bulk-course-row"><label class="me-2">' . get_string('course') . ' (optional)</label>';
+echo '<input type="number" name="courseid" class="form-control d-inline-block w-auto" value="' . (int)$courseid . '" min="0"></div>';
+
+echo '<div class="mb-2" id="bulk-class-row" style="display:none;"><label class="me-2">' . get_string('class', 'local_message_audit') . '</label>';
+echo '<select name="classkey" class="form-select d-inline-block w-auto">';
+echo '<option value="">-- ' . get_string('choose') . ' --</option>';
+foreach ($classes as $key => $label) {
+    echo '<option value="' . s($key) . '"' . ($classkey === $key ? ' selected' : '') . '>' . s($label) . '</option>';
+}
+echo '</select></div>';
+
+echo '<div class="mb-2" id="bulk-cohort-row" style="display:none;"><label class="me-2">' . get_string('cohort', 'local_message_audit') . '</label>';
+echo '<select name="cohortid" class="form-select d-inline-block w-auto">';
+echo '<option value="0">-- ' . get_string('choose') . ' --</option>';
+foreach ($cohorts as $cid => $name) {
+    echo '<option value="' . (int)$cid . '"' . ($cohortid == $cid ? ' selected' : '') . '>' . s($name) . '</option>';
+}
+echo '</select></div>';
+
+echo '<button type="submit" class="btn btn-secondary">' . get_string('update_count', 'local_message_audit') . '</button>';
+echo '</form>';
+
+echo '<p class="mb-2"><strong>' . get_string('recipients', 'local_message_audit') . ': ' . $count . '</strong></p>';
+if ($count === 0) {
+    echo '<p class="text-muted">' . get_string('no_recipients', 'local_message_audit') . '</p>';
+}
 
 $form2 = '<form method="post" action="bulk.php">';
 $form2 .= '<input type="hidden" name="target" value="' . s($target) . '">';
 $form2 .= '<input type="hidden" name="courseid" value="' . (int)$courseid . '">';
+$form2 .= '<input type="hidden" name="classkey" value="' . s($classkey) . '">';
+$form2 .= '<input type="hidden" name="cohortid" value="' . (int)$cohortid . '">';
 $form2 .= '<input type="hidden" name="confirm" value="1">';
 $form2 .= '<input type="hidden" name="sesskey" value="' . sesskey() . '">';
-$form2 .= '<label>Message:</label><br><textarea name="message" rows="4" cols="60" required></textarea><br>';
-$form2 .= '<button type="submit">Send to ' . count($recipients) . ' recipients</button></form>';
+$form2 .= '<label class="form-label">' . get_string('message', 'local_message_audit') . '</label><br><textarea name="message" class="form-control" rows="4" cols="60" required></textarea><br>';
+$form2 .= '<button type="submit" class="btn btn-primary mt-2" ' . ($count === 0 ? ' disabled' : '') . '>' . get_string('send_to_n_recipients', 'local_message_audit', $count) . '</button></form>';
 echo $form2;
 
+$PAGE->requires->js_amd_inline("
+require(['jquery'], function($) {
+    function bulkToggle() {
+        var t = $('#bulk-target').val();
+        $('#bulk-course-row').toggle(t === 'students' || t === 'teachers' || t === 'parents' || t === 'all');
+        $('#bulk-class-row').toggle(t === 'class_students' || t === 'class_teachers' || t === 'class_all' || t === 'parents_of_class');
+        $('#bulk-cohort-row').toggle(t === 'cohort');
+    }
+    $('#bulk-target').on('change', bulkToggle);
+    bulkToggle();
+});
+");
+
 echo $OUTPUT->footer();
+
+/**
+ * Get recipient user IDs based on target and filters. Union by userid, no duplicates.
+ *
+ * @param object $DB
+ * @param string $target
+ * @param int $courseid
+ * @param string $classkey year_apply_for_id-standard_id
+ * @param int $cohortid
+ * @return int[]
+ */
+function local_message_audit_bulk_get_recipients($DB, string $target, int $courseid, string $classkey, int $cohortid): array {
+    $recipients = [];
+    if (in_array($target, ['students', 'teachers', 'parents', 'all'], true)) {
+        if ($target === 'students') {
+            $recipients = $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra JOIN {role} r ON r.id = ra.roleid WHERE r.shortname = 'student'");
+        } elseif ($target === 'teachers') {
+            $recipients = $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra JOIN {role} r ON r.id = ra.roleid WHERE r.shortname IN ('teacher', 'editingteacher')");
+        } elseif ($target === 'parents') {
+            $recipients = $DB->get_fieldset_sql("SELECT DISTINCT parent_userid FROM {local_parent_portal_rel} WHERE active = 1");
+            if (empty($recipients)) {
+                $recipients = $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra JOIN {role} r ON r.id = ra.roleid WHERE r.shortname = 'parent'");
+            }
+        } else {
+            $recipients = $DB->get_fieldset_sql("SELECT id FROM {user} WHERE deleted = 0 AND id > 1");
+        }
+        if ($courseid > 0) {
+            $enrolled = $DB->get_fieldset_sql("SELECT userid FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid WHERE e.courseid = ?", [$courseid]);
+            $recipients = array_intersect($recipients, $enrolled);
+        }
+        return array_values($recipients);
+    }
+
+    if (in_array($target, ['class_students', 'class_teachers', 'class_all'], true)) {
+        $parts = explode('-', $classkey, 2);
+        $yearid = isset($parts[0]) ? (int)$parts[0] : 0;
+        $standardid = isset($parts[1]) ? (int)$parts[1] : 0;
+        if ($yearid <= 0 || $standardid <= 0) {
+            return [];
+        }
+        $courseids = $DB->get_fieldset_sql(
+            "SELECT courseid FROM {local_odoo_sync_course_map} WHERE year_apply_for_id = ? AND standard_id = ?",
+            [$yearid, $standardid]
+        );
+        if (empty($courseids)) {
+            return [];
+        }
+        list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $ctxids = $DB->get_fieldset_sql("SELECT id FROM {context} WHERE contextlevel = 50 AND instanceid " . $insql, $params);
+        if (empty($ctxids)) {
+            return [];
+        }
+        list($ctxin, $params2) = $DB->get_in_or_equal($ctxids, SQL_PARAMS_NAMED);
+        if ($target === 'class_students') {
+            $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
+            if (!$studentrole) {
+                return [];
+            }
+            $params2['roleid'] = $studentrole;
+            return $DB->get_fieldset_sql("SELECT DISTINCT userid FROM {role_assignments} WHERE contextid " . $ctxin . " AND roleid = :roleid", $params2);
+        }
+        if ($target === 'class_teachers') {
+            $teacherids = $DB->get_fieldset_sql("SELECT id FROM {role} WHERE shortname IN ('teacher', 'editingteacher')");
+            if (empty($teacherids)) {
+                return [];
+            }
+            list($rin, $params3) = $DB->get_in_or_equal($teacherids, SQL_PARAMS_NAMED);
+            return $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra WHERE ra.contextid " . $ctxin . " AND ra.roleid " . $rin, array_merge($params2, $params3));
+        }
+        return $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra WHERE ra.contextid " . $ctxin, $params2);
+    }
+
+    if ($target === 'cohort') {
+        if ($cohortid <= 0) {
+            return [];
+        }
+        return $DB->get_fieldset_sql("SELECT userid FROM {cohort_members} WHERE cohortid = ?", [$cohortid]);
+    }
+
+    if ($target === 'parents_of_class') {
+        $parts = explode('-', $classkey, 2);
+        $yearid = isset($parts[0]) ? (int)$parts[0] : 0;
+        $standardid = isset($parts[1]) ? (int)$parts[1] : 0;
+        if ($yearid <= 0 || $standardid <= 0) {
+            return [];
+        }
+        $courseids = $DB->get_fieldset_sql(
+            "SELECT courseid FROM {local_odoo_sync_course_map} WHERE year_apply_for_id = ? AND standard_id = ?",
+            [$yearid, $standardid]
+        );
+        if (empty($courseids)) {
+            return [];
+        }
+        list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $ctxids = $DB->get_fieldset_sql("SELECT id FROM {context} WHERE contextlevel = 50 AND instanceid " . $insql, $params);
+        if (empty($ctxids)) {
+            return [];
+        }
+        $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        if (!$studentrole) {
+            return [];
+        }
+        list($ctxin, $params2) = $DB->get_in_or_equal($ctxids, SQL_PARAMS_NAMED);
+        $params2['roleid'] = $studentrole;
+        $studentids = $DB->get_fieldset_sql("SELECT DISTINCT userid FROM {role_assignments} WHERE contextid " . $ctxin . " AND roleid = :roleid", $params2);
+        if (empty($studentids)) {
+            return [];
+        }
+        list($sin, $params3) = $DB->get_in_or_equal($studentids, SQL_PARAMS_NAMED);
+        return $DB->get_fieldset_sql("SELECT DISTINCT parent_userid FROM {local_parent_portal_rel} WHERE active = 1 AND student_userid " . $sin, $params3);
+    }
+
+    return [];
+}
+
+/**
+ * Get list of classes (year_apply_for_id-standard_id => label) from course map.
+ *
+ * @param object $DB
+ * @return array
+ */
+function local_message_audit_bulk_get_classes($DB): array {
+    $rows = $DB->get_records_sql("SELECT DISTINCT year_apply_for_id, standard_id FROM {local_odoo_sync_course_map} ORDER BY year_apply_for_id, standard_id");
+    $out = [];
+    foreach ($rows as $r) {
+        $key = (int)$r->year_apply_for_id . '-' . (int)$r->standard_id;
+        $out[$key] = get_string('class_label', 'local_message_audit', (object)['year' => $r->year_apply_for_id, 'standard' => $r->standard_id]);
+    }
+    return $out;
+}
+
+/**
+ * Get list of cohorts id => name.
+ *
+ * @param object $DB
+ * @return array
+ */
+function local_message_audit_bulk_get_cohorts($DB): array {
+    $recs = $DB->get_records_sql("SELECT id, name FROM {cohort} ORDER BY name");
+    $out = [];
+    foreach ($recs as $r) {
+        $out[$r->id] = $r->name;
+    }
+    return $out;
+}

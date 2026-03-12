@@ -92,13 +92,40 @@ class sync_from_odoo extends \core\task\scheduled_task {
             }
         }
         foreach ($allparents as $odooParent) {
-            $this->sync_one_parent($odooParent, $client, $parentrole, $sysctx);
+            try {
+                $this->sync_one_parent($odooParent, $client, $parentrole, $sysctx);
+            } catch (\Throwable $e) {
+                $this->log_failure($DB, null, (int)($odooParent['id'] ?? 0), 'parent', 'create_user', $e->getMessage());
+                mtrace('Odoo sync: Parent sync failed for ' . ($odooParent['id'] ?? '') . ': ' . $e->getMessage());
+            }
         }
 
         foreach ($allstudents as $odooStudent) {
-            $user = $this->sync_one_student($odooStudent, $client, $studentrole, $sysctx, $manualplugin);
-            $this->link_student_to_parent($user ? $user->id : null, $odooStudent['guardian_national_id'] ?? '');
+            $user = null;
+            try {
+                $user = $this->sync_one_student($odooStudent, $client, $studentrole, $sysctx, $manualplugin);
+            } catch (\Throwable $e) {
+                $this->log_failure($DB, null, (int)($odooStudent['id'] ?? 0), 'student', 'create_user', $e->getMessage());
+                mtrace('Odoo sync: Student sync failed for ' . ($odooStudent['id'] ?? '') . ': ' . $e->getMessage());
+            }
+            try {
+                $this->link_student_to_parent($user ? $user->id : null, $odooStudent['guardian_national_id'] ?? '');
+            } catch (\Throwable $e) {
+                $this->log_failure($DB, $user ? $user->id : null, (int)($odooStudent['id'] ?? 0), 'student', 'link_parent', $e->getMessage());
+                mtrace('Odoo sync: Link parent failed: ' . $e->getMessage());
+            }
         }
+    }
+
+    private function log_failure($DB, ?int $userid, int $odooid, string $odootype, string $action, string $errmsg): void {
+        $DB->insert_record('local_odoo_sync_failures', (object)[
+            'userid' => $userid,
+            'odoo_id' => $odooid ?: null,
+            'odoo_type' => $odootype,
+            'action' => $action,
+            'error_message' => $errmsg,
+            'timecreated' => time(),
+        ]);
     }
 
     private function get_moodle_userid_for_odoo_student(int $odoostudentid): ?int {
@@ -135,6 +162,70 @@ class sync_from_odoo extends \core\task\scheduled_task {
             'timecreated' => time(),
             'source' => 'odoo',
         ]);
+    }
+
+    /**
+     * Retry syncing one failure record (from status.php). Fetches the entity from Odoo and runs sync.
+     *
+     * @param int $failureid local_odoo_sync_failures.id
+     * @return bool success
+     */
+    public function retry_failure(int $failureid): bool {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/user/lib.php');
+        $fail = $DB->get_record('local_odoo_sync_failures', ['id' => $failureid]);
+        if (!$fail || !$fail->odoo_id || !$fail->odoo_type) {
+            return false;
+        }
+        $apiurl = get_config('local_odoo_sync', 'apiurl');
+        $apiuser = get_config('local_odoo_sync', 'apiuser');
+        $apipassword = get_config('local_odoo_sync', 'apipassword');
+        if (empty($apiurl) || empty($apiuser) || empty($apipassword)) {
+            return false;
+        }
+        try {
+            $client = new \local_odoo_sync\odoo_client($apiurl, $apiuser, $apipassword);
+            $client->login();
+        } catch (\Throwable $e) {
+            return false;
+        }
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $parentrole = $DB->get_record('role', ['shortname' => 'parent']);
+        $sysctx = \context_system::instance();
+        $manualplugin = enrol_get_plugin('manual');
+        if ($fail->odoo_type === 'student') {
+            $result = $client->student_search(['id' => $fail->odoo_id]);
+            $students = $result['students'] ?? [];
+            $one = reset($students);
+            if (!$one || (int)($one['id'] ?? 0) !== (int)$fail->odoo_id) {
+                return false;
+            }
+            try {
+                $this->sync_one_student($one, $client, $studentrole, $sysctx, $manualplugin);
+                $user = $DB->get_record('local_odoo_sync_map', ['odoo_id' => $fail->odoo_id, 'odoo_type' => 'student']);
+                if ($user) {
+                    $this->link_student_to_parent($user->userid, $one['guardian_national_id'] ?? '');
+                }
+            } catch (\Throwable $e) {
+                $this->log_failure($DB, null, (int)$fail->odoo_id, 'student', $fail->action, $e->getMessage());
+                return false;
+            }
+        } else {
+            $result = $client->parent_search(['id' => $fail->odoo_id]);
+            $parents = $result['parents'] ?? [];
+            $one = reset($parents);
+            if (!$one || (int)($one['id'] ?? 0) !== (int)$fail->odoo_id) {
+                return false;
+            }
+            try {
+                $this->sync_one_parent($one, $client, $parentrole, $sysctx);
+            } catch (\Throwable $e) {
+                $this->log_failure($DB, null, (int)$fail->odoo_id, 'parent', $fail->action, $e->getMessage());
+                return false;
+            }
+        }
+        $DB->delete_records('local_odoo_sync_failures', ['id' => $failureid]);
+        return true;
     }
 
     private function sync_one_student(
@@ -199,6 +290,7 @@ class sync_from_odoo extends \core\task\scheduled_task {
             try {
                 $client->student_update($odooid, $user->username, $user->password);
             } catch (\Throwable $e) {
+                $this->log_failure($DB, $user->id, $odooid, 'student', 'update_credentials', $e->getMessage());
                 mtrace("Could not push credentials for student {$odooid}: " . $e->getMessage());
             }
         } else {
@@ -319,6 +411,7 @@ class sync_from_odoo extends \core\task\scheduled_task {
             try {
                 $client->parent_update($odooid, $user->username, $user->password);
             } catch (\Throwable $e) {
+                $this->log_failure($DB, $user->id, $odooid, 'parent', 'update_credentials', $e->getMessage());
                 mtrace("Could not push credentials for parent {$odooid}: " . $e->getMessage());
             }
         }

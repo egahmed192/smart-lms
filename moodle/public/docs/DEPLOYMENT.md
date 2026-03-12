@@ -12,6 +12,17 @@
 6. **Message audit**: Add keyword rules in the database table `local_message_audit_keywords` if you need to flag messages.
 7. **Security**: Ensure only designated users have `local/assessments:view_secret_codes` and `local/assessments:manage_secretive`. Run a capability audit (Site administration → Users → Permissions → Check permissions).
 
+## Security checklist
+
+Before go-live, verify:
+
+- **All plugin pages**: Every script checks `require_login()` (or equivalent) and the appropriate capability before rendering content or performing actions.
+- **Parent portal**: All parent-facing pages use `local_parent_portal_is_parent_of()` to ensure a parent only sees their linked students, and enforce license checks via `local_odoo_sync_is_license_valid()` where access depends on an active license.
+- **Assessments**: Secret codes and export of secret codes are restricted to users with `local/assessments:import_export` or `local/assessments:manage_secretive`; teachers with only `manage_public` cannot create secretive assessments or see secret codes.
+- **Message audit**: Bulk messaging and keyword rules are restricted to `local/message_audit:send_bulk_message` and `local/message_audit:view_logs` (or equivalent); student–parent messaging is limited to users with `local/message_audit:message_student_parent`.
+- **Odoo sync**: Sync status and settings are restricted to `local/odoo_sync:manage`.
+- Run Site administration → Users → Permissions → Check permissions for key roles and fix any over-assigned capabilities.
+
 ## Staged rollout
 
 - Deploy to staging first; run Odoo sync with a test API account.
