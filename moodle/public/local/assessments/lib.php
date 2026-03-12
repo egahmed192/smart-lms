@@ -95,3 +95,26 @@ function local_assessments_can_see_grades(object $assessment): bool {
     }
     return $assessment->announcementdate <= time();
 }
+
+/**
+ * Recalculate averagescore and ranks for an assessment after evaluations change.
+ *
+ * @param int $assessmentid
+ */
+function local_assessments_recalculate_assessment(int $assessmentid): void {
+    global $DB;
+    $evals = $DB->get_records('local_assessments_eval', ['assessmentid' => $assessmentid], 'mark DESC, id ASC');
+    $sum = 0;
+    $count = 0;
+    $rank = 1;
+    foreach ($evals as $e) {
+        if ($e->mark !== null) {
+            $sum += (float) $e->mark;
+            $count++;
+        }
+        $DB->set_field('local_assessments_eval', 'rank', $rank, ['id' => $e->id]);
+        $rank++;
+    }
+    $avg = $count > 0 ? $sum / $count : null;
+    $DB->set_field('local_assessments', 'averagescore', $avg, ['id' => $assessmentid]);
+}

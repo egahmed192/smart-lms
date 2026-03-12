@@ -24,6 +24,7 @@ $PAGE->set_heading($course->fullname);
 
 $context = context_course::instance($courseid);
 $canmanage = has_capability('local/assessments:manage_public', $context) || has_capability('local/assessments:manage_secretive', context_system::instance());
+$cansecretive = has_capability('local/assessments:manage_secretive', context_system::instance());
 
 global $DB;
 $assessments = $DB->get_records('local_assessments', ['courseid' => $courseid], 'timecreated DESC');
@@ -32,9 +33,20 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('assessments', 'local_assessments'));
 
 $table = new html_table();
-$table->head = ['ID', 'Name', 'Type', 'Full mark', 'Weight', 'Average', 'Announcement date'];
+$table->head = ['ID', 'Name', 'Type', 'Full mark', 'Weight', 'Average', 'Announcement date', 'Actions'];
 $table->data = [];
 foreach ($assessments as $a) {
+    $actions = [];
+    if ($canmanage) {
+        $actions[] = html_writer::link(new moodle_url('/local/assessments/edit.php', ['courseid' => $courseid, 'id' => $a->id]), get_string('edit'));
+        $caninput = ($a->type === 'public' && $canmanage) || $cansecretive;
+        if ($caninput) {
+            $actions[] = html_writer::link(new moodle_url('/local/assessments/evaluations.php', ['id' => $courseid, 'assessmentid' => $a->id]), get_string('evaluations', 'local_assessments'));
+        }
+        if ($cansecretive || has_capability('local/assessments:import_export', $context)) {
+            $actions[] = html_writer::link(new moodle_url('/local/assessments/import.php', ['id' => $courseid, 'assessmentid' => $a->id]), get_string('import_evaluations', 'local_assessments'));
+        }
+    }
     $table->data[] = [
         $a->publicid,
         $a->name,
@@ -43,6 +55,7 @@ foreach ($assessments as $a) {
         $a->weight . '%',
         $a->averagescore !== null ? round($a->averagescore, 2) : '-',
         $a->announcementdate ? userdate($a->announcementdate) : '-',
+        implode(' | ', $actions),
     ];
 }
 if (!empty($table->data)) {
