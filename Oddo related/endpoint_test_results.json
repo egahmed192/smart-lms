@@ -1,0 +1,2410 @@
+{
+  "login": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "success": true,
+        "message": "Login successful",
+        "data": {
+          "user_id": 701,
+          "session_id": "68159dcc38aad46106084b5879134da6a24eef1f"
+        }
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {
+        "email": "lms_user",
+        "password": "1"
+      },
+      "id": 1
+    }
+  },
+  "student_search_national_id": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "success": true,
+        "data": {
+          "count": 1,
+          "students": [
+            {
+              "id": 8197,
+              "student_full_name": "ياسين  أحمد  السيد سمري",
+              "student_en_full_name": "Yasseen Ahmed Elsayed Semary",
+              "sequence": "S-23-08197",
+              "year_apply_for": {
+                "id": 34,
+                "display_name": "الصف الاول الابتدائى"
+              },
+              "standard_id": {
+                "id": 19,
+                "display_name": "1/A ابتدائى"
+              },
+              "license_due_date": "2023-10-17",
+              "guardian_national_id": "28103242101757"
+            }
+          ]
+        }
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {
+        "national_id": "31901171700812"
+      },
+      "id": 2
+    }
+  },
+  "student_search_name": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "success": true,
+        "data": {
+          "count": 100,
+          "students": [
+            {
+              "id": 271,
+              "student_full_name": "اروى خيرى عبد الهادى السيد مشالى",
+              "student_en_full_name": "Arwa Khairy AbdelHadi ElSayed Mashali",
+              "sequence": "S-21-00271",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": "2022-08-08",
+              "guardian_national_id": "28204301700237"
+            },
+            {
+              "id": 276,
+              "student_full_name": "تاليا محمد منصور محمد بدر",
+              "student_en_full_name": "",
+              "sequence": "S-22-09996",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 128,
+                "display_name": "4/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27311011700214"
+            },
+            {
+              "id": 279,
+              "student_full_name": "تاليا   محمد حنفى  الصاوى تركى",
+              "student_en_full_name": "",
+              "sequence": "S-22-09994",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28010291700692"
+            },
+            {
+              "id": 283,
+              "student_full_name": "ثراء  بهاء الدين جمال الدين  عبد الخالق عمر",
+              "student_en_full_name": "",
+              "sequence": "S-21-00283",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "25902261701098"
+            },
+            {
+              "id": 285,
+              "student_full_name": "جودى محمد حلمى عبد المنعم مكى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00285",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28807101700115"
+            },
+            {
+              "id": 286,
+              "student_full_name": "جورى  احمد محمد ابو ذكرى ابراهيم سلطان",
+              "student_en_full_name": "",
+              "sequence": "S-21-00286",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28103221700413"
+            },
+            {
+              "id": 288,
+              "student_full_name": "جوليا   طارق احمد النبوى محمد عبد السميع",
+              "student_en_full_name": "",
+              "sequence": "S-21-00288",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28211151600154"
+            },
+            {
+              "id": 290,
+              "student_full_name": "حبيبه   احمد ابراهيم مليجى حجازى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00290",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27302171701919"
+            },
+            {
+              "id": 291,
+              "student_full_name": "حبيبه   محمد معتمد عبد الحميد سليمان عمار",
+              "student_en_full_name": "",
+              "sequence": "S-21-00291",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28508061700071"
+            },
+            {
+              "id": 292,
+              "student_full_name": "حبيبه  محمود عبد العزيز  محفوظ الشناوى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00292",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "29104111701317"
+            },
+            {
+              "id": 293,
+              "student_full_name": "حسناء   اسلام محمد عوض عبد السلام",
+              "student_en_full_name": "",
+              "sequence": "S-21-00293",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28511231702954"
+            },
+            {
+              "id": 295,
+              "student_full_name": "حلا   خالد محمد عبدالله جبة",
+              "student_en_full_name": "",
+              "sequence": "S-21-00295",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 225,
+                "display_name": "4/F منقطعين"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28206258800055"
+            },
+            {
+              "id": 296,
+              "student_full_name": "حنين   احمد عبد العزيز عشماوى عثمان",
+              "student_en_full_name": "",
+              "sequence": "S-21-00296",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27601231700175"
+            },
+            {
+              "id": 297,
+              "student_full_name": "دارين   محمد حسن بلاطه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00297",
+              "year_apply_for": {
+                "id": 26,
+                "display_name": "الصف الثالث - الابتدائي"
+              },
+              "standard_id": {
+                "id": 118,
+                "display_name": "B/3 ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28108251700177"
+            },
+            {
+              "id": 298,
+              "student_full_name": "ديما   محمد حسن بلاطه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00298",
+              "year_apply_for": {
+                "id": 26,
+                "display_name": "الصف الثالث - الابتدائي"
+              },
+              "standard_id": {
+                "id": 118,
+                "display_name": "B/3 ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28108251700177"
+            },
+            {
+              "id": 299,
+              "student_full_name": "ديمه   سامر محمد محمد الشابورى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00299",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28407161700078"
+            },
+            {
+              "id": 300,
+              "student_full_name": "رؤى   محمود احمد محمد عبد الحافظ",
+              "student_en_full_name": "",
+              "sequence": "S-21-00300",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28810011703311"
+            },
+            {
+              "id": 301,
+              "student_full_name": "رقيه  احمد هاشم محمد حافظ محمد",
+              "student_en_full_name": "",
+              "sequence": "S-21-00301",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28208241700076"
+            },
+            {
+              "id": 338,
+              "student_full_name": "ساره   حسام محمد نور الدين",
+              "student_en_full_name": "",
+              "sequence": "S-21-00338",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28012251700251"
+            },
+            {
+              "id": 341,
+              "student_full_name": "سدره   سامى محمدابراهيم ابواحمد",
+              "student_en_full_name": "",
+              "sequence": "S-21-00341",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28005171702051"
+            },
+            {
+              "id": 342,
+              "student_full_name": "سلمى   احمد حسن عبد الرحمن عبد الحى السكرى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00342",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 126,
+                "display_name": "4/B ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28901081702732"
+            },
+            {
+              "id": 343,
+              "student_full_name": "سلمى  وليد عبد العزيز طه عامر",
+              "student_en_full_name": "",
+              "sequence": "S-21-00343",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27607141600072"
+            },
+            {
+              "id": 345,
+              "student_full_name": "سما   محمد سعد محمد طه البدرى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00345",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28112111701031"
+            },
+            {
+              "id": 346,
+              "student_full_name": "سيلا   محمد شوقى البهجى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00346",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28901141700319"
+            },
+            {
+              "id": 347,
+              "student_full_name": "سيلينا   عمرو جمال على جاد الله",
+              "student_en_full_name": "",
+              "sequence": "S-21-00347",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28605101702035"
+            },
+            {
+              "id": 349,
+              "student_full_name": "فرح  كريم عبد المنعم محمد احمد على",
+              "student_en_full_name": "",
+              "sequence": "S-21-00349",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28805051700035"
+            },
+            {
+              "id": 352,
+              "student_full_name": "فريده   اسامه محمد سعيد الششنجى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00352",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27712131702533"
+            },
+            {
+              "id": 354,
+              "student_full_name": "فريده   حامد حسين محمد السيد احمد",
+              "student_en_full_name": "",
+              "sequence": "S-21-00354",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 126,
+                "display_name": "4/B ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27607221701431"
+            },
+            {
+              "id": 355,
+              "student_full_name": "فريده   عمرو محمد محمد شبل سا لمان",
+              "student_en_full_name": "",
+              "sequence": "S-21-00355",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28312201703457"
+            },
+            {
+              "id": 356,
+              "student_full_name": "فريده   محمد ابو بكر عبد الرازق",
+              "student_en_full_name": "",
+              "sequence": "S-21-00356",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28004121700094"
+            },
+            {
+              "id": 358,
+              "student_full_name": "فريده   محمد فهمى عبد الحميد دويدار",
+              "student_en_full_name": "",
+              "sequence": "S-21-00358",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27908201700039"
+            },
+            {
+              "id": 359,
+              "student_full_name": "فريده   محمد محمود ابراهيم احمد الدعباس",
+              "student_en_full_name": "",
+              "sequence": "S-21-00359",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28208011607751"
+            },
+            {
+              "id": 360,
+              "student_full_name": "فريده   محمد مصطفى حامد احمد شريفه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00360",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28710281700416"
+            },
+            {
+              "id": 362,
+              "student_full_name": "فريده   هيثم عبد الحكيم الدسوقى عبد المعطى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00362",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28611251703536"
+            },
+            {
+              "id": 363,
+              "student_full_name": "فيروز   احمد حمدى واصل",
+              "student_en_full_name": "",
+              "sequence": "S-21-00363",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28703151700132"
+            },
+            {
+              "id": 364,
+              "student_full_name": "فيروز   علاء عفت حسن",
+              "student_en_full_name": "",
+              "sequence": "S-21-00364",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28005171701438"
+            },
+            {
+              "id": 365,
+              "student_full_name": "فيروز محمد عطا الشافعى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00365",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28707011701436"
+            },
+            {
+              "id": 366,
+              "student_full_name": "فيروز هيثم عبد الحكيم الدسوقى عبد المعطى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00366",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28611251703536"
+            },
+            {
+              "id": 369,
+              "student_full_name": "كارمن محمد توحيد عبد القادر مصطفى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00369",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 128,
+                "display_name": "4/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28205301700276"
+            },
+            {
+              "id": 437,
+              "student_full_name": "كرمه ابراهيم شريف مصطفى مصطفى الميهى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00437",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28608091700194"
+            },
+            {
+              "id": 440,
+              "student_full_name": "كرمه هيثم محيى الدين عبد الحميد سليمه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00440",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28412111700054"
+            },
+            {
+              "id": 451,
+              "student_full_name": "مريم محمد احمد حسن ابو سكينه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00451",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28111011700057"
+            },
+            {
+              "id": 454,
+              "student_full_name": "مريم مصطفى ابراهيم عبد العزيز حبلص",
+              "student_en_full_name": "",
+              "sequence": "S-21-00454",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28406221700076"
+            },
+            {
+              "id": 456,
+              "student_full_name": "ملك محمد عبد الحق حسنى السيد شريبه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00456",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28503310101556"
+            },
+            {
+              "id": 457,
+              "student_full_name": "مليكه مروان احمد عبد الله خميس",
+              "student_en_full_name": "",
+              "sequence": "S-21-00457",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28410011710955"
+            },
+            {
+              "id": 458,
+              "student_full_name": "منه احمد طه مصطفى السعدنى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00458",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28609011701337"
+            },
+            {
+              "id": 460,
+              "student_full_name": "ميرنا ابراهيم عبد الوهاب عبد الرحمن الصباغ",
+              "student_en_full_name": "",
+              "sequence": "S-21-00460",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 128,
+                "display_name": "4/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27801181702472"
+            },
+            {
+              "id": 461,
+              "student_full_name": "ندى احمد سعيد محمد الكيلانى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00461",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28404138800937"
+            },
+            {
+              "id": 464,
+              "student_full_name": "هنا هيثم حمدى محمد دردير القطان",
+              "student_en_full_name": "",
+              "sequence": "S-21-00464",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28108088800231"
+            },
+            {
+              "id": 467,
+              "student_full_name": "يمنى محمد عبد المعطى عبد القادر محمد",
+              "student_en_full_name": "",
+              "sequence": "S-21-00467",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28309171700155"
+            },
+            {
+              "id": 535,
+              "student_full_name": "احمد رامى سعيد محمد سمرى",
+              "student_en_full_name": "",
+              "sequence": "S-22-09990",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28010098800051"
+            },
+            {
+              "id": 536,
+              "student_full_name": "احمد عماد حمدى محمود جاد",
+              "student_en_full_name": "",
+              "sequence": "S-22-09989",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27711161700431"
+            },
+            {
+              "id": 538,
+              "student_full_name": "احمد وليد شرف السيد شرف",
+              "student_en_full_name": "",
+              "sequence": "S-22-09988",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28803081700355"
+            },
+            {
+              "id": 539,
+              "student_full_name": "آدم امير احمد فؤاد المهدى القاضى",
+              "student_en_full_name": "",
+              "sequence": "S-22-09987",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28004131700076"
+            },
+            {
+              "id": 540,
+              "student_full_name": "آدم عماد محمد حجازى على",
+              "student_en_full_name": "",
+              "sequence": "S-22-09986",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27701051700431"
+            },
+            {
+              "id": 541,
+              "student_full_name": "آدم معاذ فؤاد عبد الرحمن عسكر",
+              "student_en_full_name": "",
+              "sequence": "S-22-09985",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28412151703854"
+            },
+            {
+              "id": 544,
+              "student_full_name": "امير احمد عبد العزيز  عبد الله محمد حبيب",
+              "student_en_full_name": "",
+              "sequence": "S-21-00544",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28711168800079"
+            },
+            {
+              "id": 545,
+              "student_full_name": "انس احمد اشرف الشاذلى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00545",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28601061700195"
+            },
+            {
+              "id": 546,
+              "student_full_name": "انس عمرو السيد عبد الخالق محمود",
+              "student_en_full_name": "",
+              "sequence": "S-22-09983",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28705261700033"
+            },
+            {
+              "id": 547,
+              "student_full_name": "اياد احمد حمدى عبد الستار محمد",
+              "student_en_full_name": "",
+              "sequence": "S-21-00547",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28601161700338"
+            },
+            {
+              "id": 548,
+              "student_full_name": "باسل محمد محفوظ عبد الحميد ",
+              "student_en_full_name": "",
+              "sequence": "S-21-00548",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27606121700031"
+            },
+            {
+              "id": 550,
+              "student_full_name": "جمال عمرو جمال سعد ابراهيم",
+              "student_en_full_name": "",
+              "sequence": "S-21-00550",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28012101700376"
+            },
+            {
+              "id": 551,
+              "student_full_name": "حسين محمد عبد الغنى عثمان الشرقاوى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00551",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27601011700379"
+            },
+            {
+              "id": 552,
+              "student_full_name": "حمزه محمود محمد عبد الوهاب السباعى لاشين",
+              "student_en_full_name": "",
+              "sequence": "S-21-00552",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28710011702654"
+            },
+            {
+              "id": 554,
+              "student_full_name": "زياد وليد عبد الرحمن عبد الشافى عبد الرحمن",
+              "student_en_full_name": "",
+              "sequence": "S-21-00554",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27210211700056"
+            },
+            {
+              "id": 555,
+              "student_full_name": "زياد ياسر عطيه عبد الفتاح عطيه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00555",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27606081702214"
+            },
+            {
+              "id": 557,
+              "student_full_name": "سليم امجد صبحى عطيه ابو الخير",
+              "student_en_full_name": "",
+              "sequence": "S-21-00557",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28209011703978"
+            },
+            {
+              "id": 558,
+              "student_full_name": "سليم امين احمد امين عبد الكريم",
+              "student_en_full_name": "",
+              "sequence": "S-21-00558",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28505178800311"
+            },
+            {
+              "id": 560,
+              "student_full_name": "شوقى ضياء الحق شوقى السيد اسماعيل زيدان",
+              "student_en_full_name": "",
+              "sequence": "S-21-00560",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28809101700533"
+            },
+            {
+              "id": 561,
+              "student_full_name": "عبد الرحمن احمد عبد الرحمن أحمد حتحوت",
+              "student_en_full_name": "",
+              "sequence": "S-21-00561",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 128,
+                "display_name": "4/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28408161702077"
+            },
+            {
+              "id": 562,
+              "student_full_name": "عبد الرحمن احمد محمد السيد فخر",
+              "student_en_full_name": "",
+              "sequence": "S-21-00562",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "29102141700037"
+            },
+            {
+              "id": 564,
+              "student_full_name": "على محمود السيد محمود ابو سيار",
+              "student_en_full_name": "",
+              "sequence": "S-21-00564",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27808141700111"
+            },
+            {
+              "id": 565,
+              "student_full_name": "عمر احمد سامى كامل الجندى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00565",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28706101700173"
+            },
+            {
+              "id": 566,
+              "student_full_name": "عمر محمد جوهر احمد جوهر",
+              "student_en_full_name": "",
+              "sequence": "S-21-00566",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "26710161700091"
+            },
+            {
+              "id": 567,
+              "student_full_name": "عمر محمد عبد القوى السعدنى جزر",
+              "student_en_full_name": "",
+              "sequence": "S-21-00567",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28411061700051"
+            },
+            {
+              "id": 602,
+              "student_full_name": "عمر محمود محمد عبد المنعم ابراهيم",
+              "student_en_full_name": "",
+              "sequence": "S-21-00602",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28702211700033"
+            },
+            {
+              "id": 603,
+              "student_full_name": "عمر هيثم مجدى صلاح  الدين البيه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00603",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 48,
+                "display_name": "4/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "29101221701135"
+            },
+            {
+              "id": 605,
+              "student_full_name": "فارس احمد محسن ابراهيم عبد ربه الحفناوى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00605",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28810061700533"
+            },
+            {
+              "id": 607,
+              "student_full_name": "مؤمن محمد الحسين عبد الغنى الجزار",
+              "student_en_full_name": "",
+              "sequence": "S-21-00607",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 125,
+                "display_name": "4/A ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27906141700112"
+            },
+            {
+              "id": 608,
+              "student_full_name": "مازن محمد سعد فتوح سعد ابوشعبان",
+              "student_en_full_name": "",
+              "sequence": "S-21-00608",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28601091700297"
+            },
+            {
+              "id": 610,
+              "student_full_name": "مالك احمد حسن حامد بلاطه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00610",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28312221700055"
+            },
+            {
+              "id": 611,
+              "student_full_name": "مالك احمد ربيع مليجى مصطفى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00611",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 137,
+                "display_name": "5/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28802218800551"
+            },
+            {
+              "id": 612,
+              "student_full_name": "مالك امير ابراهيم عبد الحميد لاشين",
+              "student_en_full_name": "",
+              "sequence": "S-21-00612",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28508231700217"
+            },
+            {
+              "id": 614,
+              "student_full_name": "مالك علاء امين بسيونى خليفه",
+              "student_en_full_name": "",
+              "sequence": "S-21-00614",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28306011701415"
+            },
+            {
+              "id": 615,
+              "student_full_name": "مالك محمد بدر عبد العاطى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00615",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28611221700036"
+            },
+            {
+              "id": 617,
+              "student_full_name": "مالك محمد مصطفى عبد البر",
+              "student_en_full_name": "",
+              "sequence": "S-21-00617",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28211181701133"
+            },
+            {
+              "id": 623,
+              "student_full_name": "محمود احمد محمود السيد حجاج",
+              "student_en_full_name": "",
+              "sequence": "S-21-00623",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 192,
+                "display_name": "4/E ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28509261700498"
+            },
+            {
+              "id": 625,
+              "student_full_name": "محمود محمد محمود احمد الشرقاوى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00625",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28709121703631"
+            },
+            {
+              "id": 627,
+              "student_full_name": "مروان محمد معتمد عبد الحميد سليمان عماره",
+              "student_en_full_name": "",
+              "sequence": "S-21-00627",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28508061700071"
+            },
+            {
+              "id": 628,
+              "student_full_name": "مصطفى احمد سعيد محمد الكيلانى",
+              "student_en_full_name": "",
+              "sequence": "S-21-00628",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28404138800937"
+            },
+            {
+              "id": 631,
+              "student_full_name": "مصطفى محمد زكريا عبد الرحمن ساير داير",
+              "student_en_full_name": "",
+              "sequence": "S-21-00631",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 126,
+                "display_name": "4/B ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28603041700094"
+            },
+            {
+              "id": 644,
+              "student_full_name": "ياسين احمد عبد العزيز رضا عبد العزيز",
+              "student_en_full_name": "",
+              "sequence": "S-21-00644",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28907110400099"
+            },
+            {
+              "id": 645,
+              "student_full_name": "ياسين علاء الدين سمير محمد بدر",
+              "student_en_full_name": "",
+              "sequence": "S-22-09982",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27404298800051"
+            },
+            {
+              "id": 646,
+              "student_full_name": "ياسين عمرو ابراهيم  فتح الله عبد الحى",
+              "student_en_full_name": "",
+              "sequence": "S-22-09981",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28901281700211"
+            },
+            {
+              "id": 649,
+              "student_full_name": "يحيى محمود عبد الرازق محمد عبد الرازق",
+              "student_en_full_name": "",
+              "sequence": "S-21-00649",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28302201700631"
+            },
+            {
+              "id": 650,
+              "student_full_name": "يزن هادى السيد احمد عبد الله",
+              "student_en_full_name": "",
+              "sequence": "S-21-00650",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28411011700174"
+            },
+            {
+              "id": 651,
+              "student_full_name": "يوسف احمد كامل عبد العزيز هلال",
+              "student_en_full_name": "",
+              "sequence": "S-21-00651",
+              "year_apply_for": {
+                "id": 27,
+                "display_name": "الصف الرابع - الابتدائي"
+              },
+              "standard_id": {
+                "id": 204,
+                "display_name": "4/F ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28103151802655"
+            },
+            {
+              "id": 653,
+              "student_full_name": "يوسف عمرو السيد عبد الخالق محمود",
+              "student_en_full_name": "",
+              "sequence": "S-22-09980",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 138,
+                "display_name": "5/D ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28705261700033"
+            },
+            {
+              "id": 688,
+              "student_full_name": "اسيل محمد انور ابراهيم عبد الخالق",
+              "student_en_full_name": "",
+              "sequence": "S-21-00688",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 137,
+                "display_name": "5/C ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "27802011802771"
+            },
+            {
+              "id": 689,
+              "student_full_name": "بيرى سامح سامى طه النحته",
+              "student_en_full_name": "",
+              "sequence": "S-22-09979",
+              "year_apply_for": {
+                "id": 28,
+                "display_name": "الصف الخامس - الابتدائي"
+              },
+              "standard_id": {
+                "id": 136,
+                "display_name": "5/B ابتدائى"
+              },
+              "license_due_date": null,
+              "guardian_national_id": "28705121702079"
+            }
+          ]
+        }
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {
+        "name": "ا"
+      },
+      "id": 3
+    }
+  },
+  "student_update": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "result": {
+        "success": true,
+        "message": "Student LMS credentials updated successfully",
+        "data": {
+          "id": 8197,
+          "lms_username": "test_lms_user",
+          "lms_password": "test_pass_123"
+        }
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {
+        "id": 8197,
+        "lms_username": "test_lms_user",
+        "lms_password": "test_pass_123"
+      },
+      "id": 4
+    }
+  },
+  "parent_search": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 5,
+      "result": {
+        "success": false,
+        "error": "bad_request",
+        "message": "At least one search parameter (id, name, or national_id) is required"
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {},
+      "id": 5
+    }
+  },
+  "parent_search_name": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 6,
+      "result": {
+        "success": true,
+        "data": {
+          "count": 100,
+          "parents": [
+            {
+              "id": 48,
+              "name": "خيرى عبد الهادى السيد مشالى",
+              "email": "eman.sobh@pharma.cu.edu.eg",
+              "identification_id": "28204301700237"
+            },
+            {
+              "id": 49,
+              "name": "ياسر محمد محمود عبد الكريم",
+              "email": "",
+              "identification_id": "28102011700198"
+            },
+            {
+              "id": 52,
+              "name": "السيد صبرى حامد السيد البرعى",
+              "email": "",
+              "identification_id": "28912011705876"
+            },
+            {
+              "id": 55,
+              "name": "عمرو ابراهيم عبد العزير عامر",
+              "email": "",
+              "identification_id": "28908251700459"
+            },
+            {
+              "id": 56,
+              "name": "محمد حنفى  الصاوى تركى",
+              "email": "tfffmmn@gmail.com",
+              "identification_id": "28010291700692"
+            },
+            {
+              "id": 58,
+              "name": "عمرو السيد محمد سمرى",
+              "email": "",
+              "identification_id": "28210051700058"
+            },
+            {
+              "id": 59,
+              "name": "احمد رجب جابر الجزاره",
+              "email": "",
+              "identification_id": "28104281701598"
+            },
+            {
+              "id": 60,
+              "name": "بهاء الدين جمال الدين عبد الخالق عمر",
+              "email": "",
+              "identification_id": "25902261701098"
+            },
+            {
+              "id": 61,
+              "name": "سامح محمد ابو العلا محمد",
+              "email": "",
+              "identification_id": "27810211700193"
+            },
+            {
+              "id": 62,
+              "name": "محمد حلمى عبد المنعم مكى",
+              "email": "mohamed.helmy@nesmaairlines-eg.com",
+              "identification_id": "28807101700115"
+            },
+            {
+              "id": 63,
+              "name": "احمد محمد ابو ذكرى ابراهيم سلطان",
+              "email": "ahmedabozekree66@gmail.com",
+              "identification_id": "28103221700413"
+            },
+            {
+              "id": 65,
+              "name": "طارق احمد النبوى محمد عبد السميع",
+              "email": "rehamBadrawy81@gmail.com",
+              "identification_id": "28211151600154"
+            },
+            {
+              "id": 66,
+              "name": "ابراهيم شوقى ابراهيم عبد العاطى",
+              "email": "",
+              "identification_id": "28211141700533"
+            },
+            {
+              "id": 67,
+              "name": "احمد ابراهيم مليجى حجازى",
+              "email": "",
+              "identification_id": "27302171701919"
+            },
+            {
+              "id": 68,
+              "name": "محمد معتمد عبد الحميد سليمان عماره",
+              "email": "",
+              "identification_id": "28508061700071"
+            },
+            {
+              "id": 69,
+              "name": "محمود عبد العزيز محفوظ الشناوى",
+              "email": "",
+              "identification_id": "29104111701317"
+            },
+            {
+              "id": 70,
+              "name": "اسلام محمد عوض عبد السلام",
+              "email": "asmaa.nassar586@gmail.com",
+              "identification_id": "28511231702954"
+            },
+            {
+              "id": 71,
+              "name": "انس احمد امين احمد",
+              "email": "",
+              "identification_id": "28103011704718"
+            },
+            {
+              "id": 72,
+              "name": "خالد محمد عبدالله جبة",
+              "email": "As_kh_22@yahoo.com",
+              "identification_id": "28206258800055"
+            },
+            {
+              "id": 73,
+              "name": "احمد عبد العزيز عشماوى عثمان",
+              "email": "",
+              "identification_id": "27601231700175"
+            },
+            {
+              "id": 74,
+              "name": "محمد حسن بلاطه",
+              "email": "mmzyka748@gmail.com",
+              "identification_id": "28108251700177"
+            },
+            {
+              "id": 75,
+              "name": "سامر محمد محمد الشابورى",
+              "email": "asmaamousa4m@yahoo.com",
+              "identification_id": "28407161700078"
+            },
+            {
+              "id": 76,
+              "name": "محمود احمد محمد عبد الحافظ",
+              "email": "mai_medhat251@yahoo.com",
+              "identification_id": "28810011703311"
+            },
+            {
+              "id": 77,
+              "name": "احمد هاشم محمد حافظ محمد",
+              "email": "",
+              "identification_id": "28208241700076"
+            },
+            {
+              "id": 78,
+              "name": "فايز احمد بدوى محمد كحلى",
+              "email": "",
+              "identification_id": "28302011701177"
+            },
+            {
+              "id": 79,
+              "name": "حازم محمد سمير فهيم ابو راضى",
+              "email": "",
+              "identification_id": "28506241702754"
+            },
+            {
+              "id": 112,
+              "name": "حسام محمد نور الدين",
+              "email": "hosamnoor165@yahoo.com",
+              "identification_id": "28012251700251"
+            },
+            {
+              "id": 115,
+              "name": "سامى محمدابراهيم ابواحمد",
+              "email": "samasamy3046@gmail.com",
+              "identification_id": "28005171702051"
+            },
+            {
+              "id": 116,
+              "name": "احمد حسن عبد الرحمن عبد الحى السكرى",
+              "email": "forevermania2003@gmail.com",
+              "identification_id": "28901081702732"
+            },
+            {
+              "id": 117,
+              "name": "وليد عبد العزيز طه عامر",
+              "email": "",
+              "identification_id": "27607141600072"
+            },
+            {
+              "id": 118,
+              "name": "امير على ابو بكر احمد عبد اللاه",
+              "email": "",
+              "identification_id": "28412101700251"
+            },
+            {
+              "id": 119,
+              "name": "محمد سعد محمد طه البدرى",
+              "email": "Dinabakr199230@gmail.com",
+              "identification_id": "28112111701031"
+            },
+            {
+              "id": 120,
+              "name": "محمد شوقى البهجى",
+              "email": "",
+              "identification_id": "28901141700319"
+            },
+            {
+              "id": 121,
+              "name": "عمرو جمال على جاد الله",
+              "email": "amrgamalgadallah@gmail.com",
+              "identification_id": "28605101702035"
+            },
+            {
+              "id": 123,
+              "name": "كريم عبد المنعم محمد احمد على",
+              "email": "kareim1988@gmail.com",
+              "identification_id": "28805051700035"
+            },
+            {
+              "id": 124,
+              "name": "احمد سعيد مختار حنفى",
+              "email": "",
+              "identification_id": "28907051700318"
+            },
+            {
+              "id": 126,
+              "name": "اسامه محمد سعيد الششنجى",
+              "email": "noor12_1977@yahoo.com",
+              "identification_id": "27712131702533"
+            },
+            {
+              "id": 128,
+              "name": "حامد حسين محمد السيد احمد",
+              "email": "hamed.76@hotmail.it",
+              "identification_id": "27607221701431"
+            },
+            {
+              "id": 129,
+              "name": "عمرو محمد محمد شبل سالمان",
+              "email": "salmaelkholy2016@gmail.com",
+              "identification_id": "28312201703457"
+            },
+            {
+              "id": 130,
+              "name": "محمد ابو بكر عبد الرازق",
+              "email": "drhodaatef1@gmail.com",
+              "identification_id": "28004121700094"
+            },
+            {
+              "id": 132,
+              "name": "محمد فهمى عبد الحميد دويدار",
+              "email": "dodynbe@gmail.com",
+              "identification_id": "27908201700039"
+            },
+            {
+              "id": 133,
+              "name": "محمد محمود ابراهيم احمد الدعباس",
+              "email": "",
+              "identification_id": "28208011607751"
+            },
+            {
+              "id": 134,
+              "name": "محمد مصطفى حامد احمد شريفه",
+              "email": "maielhawary2010@gmail.com",
+              "identification_id": "28710281700416"
+            },
+            {
+              "id": 136,
+              "name": "هيثم عبد الحكيم الدسوقى عبد المعطى",
+              "email": "h.aldesouky@gmail.com",
+              "identification_id": "28611251703536"
+            },
+            {
+              "id": 137,
+              "name": "احمد حمدى واصل",
+              "email": "elsisyeman@gmail.com",
+              "identification_id": "28703151700132"
+            },
+            {
+              "id": 138,
+              "name": "علاء عفت حسن",
+              "email": "alaaefat@yahoo.com",
+              "identification_id": "28005171701438"
+            },
+            {
+              "id": 139,
+              "name": "محمد عطا طلبه الشافعى محمد",
+              "email": "mohamed.ata@hotmail.com",
+              "identification_id": "28707011701436"
+            },
+            {
+              "id": 142,
+              "name": "محمود على محمد القفل",
+              "email": "",
+              "identification_id": "28511231701273"
+            },
+            {
+              "id": 143,
+              "name": "محمد توحيد عبد القادر مصطفى",
+              "email": "carmentawheed2016@gmail.com",
+              "identification_id": "28205301700276"
+            },
+            {
+              "id": 177,
+              "name": "هانى عبد الراضى سيد احمد بعث الله",
+              "email": "",
+              "identification_id": "28004171701172"
+            },
+            {
+              "id": 178,
+              "name": "ابراهيم شريف مصطفى مصطفى الميهى",
+              "email": "ibrahemmehy@gmail.com",
+              "identification_id": "28608091700194"
+            },
+            {
+              "id": 179,
+              "name": "احمد عباس عبد السلام ضيف",
+              "email": "",
+              "identification_id": "29001011703238"
+            },
+            {
+              "id": 180,
+              "name": " حسام عبد الشافى محمد نصر",
+              "email": "",
+              "identification_id": "28602021700091"
+            },
+            {
+              "id": 181,
+              "name": "هيثم محيى الدين عبد الحميد سليمه",
+              "email": "Iusemsem@icloud.com",
+              "identification_id": "28412111700054"
+            },
+            {
+              "id": 183,
+              "name": "انس منصور عبد الفتاح ناصر",
+              "email": "",
+              "identification_id": "29003031700556"
+            },
+            {
+              "id": 184,
+              "name": "اسامه محمد سعيد محمد زهران",
+              "email": "",
+              "identification_id": "29006171700199"
+            },
+            {
+              "id": 185,
+              "name": "محمد سمير على ابو عياد",
+              "email": "",
+              "identification_id": "28403101700197"
+            },
+            {
+              "id": 188,
+              "name": "احمد محمد احمد باشا",
+              "email": "",
+              "identification_id": "28712151703831"
+            },
+            {
+              "id": 189,
+              "name": "وليد اسامه عبد الحليم",
+              "email": "",
+              "identification_id": "28906201700617"
+            },
+            {
+              "id": 192,
+              "name": "محمد احمد حسن ابو سكينه",
+              "email": "samarahmedma@gmail.com",
+              "identification_id": "28111011700057"
+            },
+            {
+              "id": 195,
+              "name": "مصطفى ابراهيم عبد العزيز حبلص",
+              "email": "shimaa.amr52@gmail.com",
+              "identification_id": "28406221700076"
+            },
+            {
+              "id": 196,
+              "name": "احمد معوض محمد الخولى",
+              "email": "",
+              "identification_id": "28410221700031"
+            },
+            {
+              "id": 197,
+              "name": "محمد عبد الحق حسنى السيد شريبه",
+              "email": "",
+              "identification_id": "28503310101556"
+            },
+            {
+              "id": 198,
+              "name": "مروان احمد عبد الله خميس",
+              "email": "mohamedturky2000@gmail.com",
+              "identification_id": "28410011710955"
+            },
+            {
+              "id": 199,
+              "name": "احمد طه مصطفى السعدنى",
+              "email": "",
+              "identification_id": "28609011701337"
+            },
+            {
+              "id": 201,
+              "name": "ابراهيم عبد الوهاب عبد الرحمن الصباغ",
+              "email": "hemasally2@gmail.com",
+              "identification_id": "27801181702472"
+            },
+            {
+              "id": 202,
+              "name": "احمد سعيد محمد الكيلانى",
+              "email": "dr_naboelkhair@yahoo.com",
+              "identification_id": "28404138800937"
+            },
+            {
+              "id": 203,
+              "name": "احمد عبد الرؤوف محمد على",
+              "email": "",
+              "identification_id": "28404101703532"
+            },
+            {
+              "id": 205,
+              "name": "هيثم حمدى محمد دردير القطان",
+              "email": "kattanhaethm@gmail.com",
+              "identification_id": "28108088800231"
+            },
+            {
+              "id": 208,
+              "name": "محمد عبد المعطى عبد القادر محمد",
+              "email": "Eng_abdelkader66@yahoo.com",
+              "identification_id": "28309171700155"
+            },
+            {
+              "id": 210,
+              "name": "رامى سعيد محمد سمرى",
+              "email": "enasgad56@gmail.com",
+              "identification_id": "28010098800051"
+            },
+            {
+              "id": 211,
+              "name": "عماد حمدى محمود جاد",
+              "email": "emadgadsalemaa@yahoo.com",
+              "identification_id": "27711161700431"
+            },
+            {
+              "id": 212,
+              "name": "محمد سعيد محمد محمد السنافيرى",
+              "email": "",
+              "identification_id": "28509071704691"
+            },
+            {
+              "id": 213,
+              "name": "وليد شرف السيد شرف",
+              "email": "waleedcapt12@gmail.com",
+              "identification_id": "28803081700355"
+            },
+            {
+              "id": 214,
+              "name": "امير احمد فؤاد المهدى القاضى",
+              "email": "shehabnivin@gmail.com",
+              "identification_id": "28004131700076"
+            },
+            {
+              "id": 215,
+              "name": "عماد محمد حجازى على",
+              "email": "wallaelkady55@gmail.com",
+              "identification_id": "27701051700431"
+            },
+            {
+              "id": 216,
+              "name": "معاذ فؤاد عبد الرحمن عسكر",
+              "email": "moazasker9@gmail.com",
+              "identification_id": "28412151703854"
+            },
+            {
+              "id": 217,
+              "name": "محمد عبد المطلب عبد الغنى رجب",
+              "email": "",
+              "identification_id": "28107201700072"
+            },
+            {
+              "id": 219,
+              "name": "احمد عبد العزيز  عبد الله محمد حبيب",
+              "email": "",
+              "identification_id": "28711168800079"
+            },
+            {
+              "id": 221,
+              "name": "عمرو السيد عبد الخالق محمود",
+              "email": "sarah_eldeeb23@yahoo.com",
+              "identification_id": "28705261700033"
+            },
+            {
+              "id": 222,
+              "name": "احمد حمدى عبد الستار محمد",
+              "email": "salehmarwa825@gmail.com",
+              "identification_id": "28601161700338"
+            },
+            {
+              "id": 223,
+              "name": "محمد محفوظ عبد الحميد ",
+              "email": "dr_sagagr@yahoo.com",
+              "identification_id": "27606121700031"
+            },
+            {
+              "id": 224,
+              "name": "محمد عبد العزيز محمد بيومى بدر",
+              "email": "remasbadrmeka@gmail.com",
+              "identification_id": "28310271700355"
+            },
+            {
+              "id": 225,
+              "name": "عمرو جمال سعد ابراهيم",
+              "email": "raghadamr2015@gmail.com",
+              "identification_id": "28012101700376"
+            },
+            {
+              "id": 226,
+              "name": "محمد عبد الغنى عثمان الشرقاوى",
+              "email": "",
+              "identification_id": "27601011700379"
+            },
+            {
+              "id": 227,
+              "name": "محمود محمد عبد الوهاب السباعى لاشين",
+              "email": "lasheenmahmoud999@gmail.com",
+              "identification_id": "28710011702654"
+            },
+            {
+              "id": 228,
+              "name": "محمود رفعت  حنفى السيد سليمان",
+              "email": "",
+              "identification_id": "28808191700417"
+            },
+            {
+              "id": 229,
+              "name": "وليد عبد الرحمن عبد الشافى عبد الرحمن",
+              "email": "emy_science@yahoo.com",
+              "identification_id": "27210211700056"
+            },
+            {
+              "id": 230,
+              "name": "ياسر عطيه عبد الفتاح عطيه",
+              "email": "",
+              "identification_id": "27606081702214"
+            },
+            {
+              "id": 231,
+              "name": "الدين ابراهيم مجدى محمد نور الدين",
+              "email": "",
+              "identification_id": "28906161700139"
+            },
+            {
+              "id": 232,
+              "name": "امجد صبحى عطيه ابو الخير",
+              "email": "adam.amgd.aboelkheir@gmail.com",
+              "identification_id": "28209011703978"
+            },
+            {
+              "id": 233,
+              "name": "امين احمد امين عبد الكريم",
+              "email": "",
+              "identification_id": "28505178800311"
+            },
+            {
+              "id": 235,
+              "name": "ضياء الحق شوقى السيد اسماعيل زيدان",
+              "email": "yoyozidan35@gmail.com",
+              "identification_id": "28809101700533"
+            },
+            {
+              "id": 236,
+              "name": "احمد عبد الرحمن حتحوت",
+              "email": "soha.zanaty22@yahoo.com",
+              "identification_id": "28408161702077"
+            },
+            {
+              "id": 237,
+              "name": "احمد محمدالسيد فخر",
+              "email": "",
+              "identification_id": "29102141700037"
+            },
+            {
+              "id": 238,
+              "name": "على عبد الحكم على محمد الحايس",
+              "email": "",
+              "identification_id": "28808211700257"
+            },
+            {
+              "id": 239,
+              "name": "محمود السيد محمود ابو سيار",
+              "email": "m0101957141@yahoo.com",
+              "identification_id": "27808141700111"
+            },
+            {
+              "id": 240,
+              "name": "احمد سامى كامل الجندى",
+              "email": "agindy0011@gmail.com",
+              "identification_id": "28706101700173"
+            },
+            {
+              "id": 241,
+              "name": "محمد جوهر احمد جوهر",
+              "email": "mgohar@hotmail.com",
+              "identification_id": "26710161700091"
+            },
+            {
+              "id": 242,
+              "name": "محمد عبد القوى السعدنى جزر",
+              "email": "",
+              "identification_id": "28411061700051"
+            }
+          ]
+        }
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {
+        "name": "ا"
+      },
+      "id": 6
+    }
+  },
+  "parent_update": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 7,
+      "result": {
+        "success": true,
+        "message": "Parent LMS credentials updated successfully",
+        "data": {
+          "id": 48,
+          "lms_username": "test_parent_lms",
+          "lms_password": "test_parent_pass"
+        }
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {
+        "id": 48,
+        "lms_username": "test_parent_lms",
+        "lms_password": "test_parent_pass"
+      },
+      "id": 7
+    }
+  },
+  "logout": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 8,
+      "result": {
+        "success": true,
+        "message": "Logout successful"
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {},
+      "id": 8
+    }
+  },
+  "login_invalid": {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 9,
+      "result": {
+        "success": false,
+        "error": "unauthorized",
+        "message": "Invalid email or password"
+      }
+    },
+    "payload": {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": {
+        "email": "lms_user",
+        "password": "wrong_password"
+      },
+      "id": 9
+    }
+  }
+}

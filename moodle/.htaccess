@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Allow everything under public/ to be served normally.
+RewriteRule ^public/ - [L]
+
+# Block direct access to any other files/directories under /moodle.
+RewriteRule ^.* - [R=404]
+
