@@ -308,6 +308,7 @@ $cache = array (
       'login' => 'C:\\xampp\\htdocs\\moodle/public/blocks/login',
       'lp' => 'C:\\xampp\\htdocs\\moodle/public/blocks/lp',
       'mentees' => 'C:\\xampp\\htdocs\\moodle/public/blocks/mentees',
+      'message_audit_notice' => 'C:\\xampp\\htdocs\\moodle/public/blocks/message_audit_notice',
       'myoverview' => 'C:\\xampp\\htdocs\\moodle/public/blocks/myoverview',
       'myprofile' => 'C:\\xampp\\htdocs\\moodle/public/blocks/myprofile',
       'navigation' => 'C:\\xampp\\htdocs\\moodle/public/blocks/navigation',
@@ -318,6 +319,7 @@ $cache = array (
       'recentlyaccessedcourses' => 'C:\\xampp\\htdocs\\moodle/public/blocks/recentlyaccessedcourses',
       'recentlyaccesseditems' => 'C:\\xampp\\htdocs\\moodle/public/blocks/recentlyaccesseditems',
       'rss_client' => 'C:\\xampp\\htdocs\\moodle/public/blocks/rss_client',
+      'school_links' => 'C:\\xampp\\htdocs\\moodle/public/blocks/school_links',
       'search_forums' => 'C:\\xampp\\htdocs\\moodle/public/blocks/search_forums',
       'selfcompletion' => 'C:\\xampp\\htdocs\\moodle/public/blocks/selfcompletion',
       'settings' => 'C:\\xampp\\htdocs\\moodle/public/blocks/settings',
@@ -603,9 +605,14 @@ $cache = array (
     array (
       'boost' => 'C:\\xampp\\htdocs\\moodle\\public/theme/boost',
       'classic' => 'C:\\xampp\\htdocs\\moodle\\public/theme/classic',
+      'school' => 'C:\\xampp\\htdocs\\moodle\\public/theme/school',
     ),
     'local' => 
     array (
+      'assessments' => 'C:\\xampp\\htdocs\\moodle\\public/local/assessments',
+      'message_audit' => 'C:\\xampp\\htdocs\\moodle\\public/local/message_audit',
+      'odoo_sync' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync',
+      'parent_portal' => 'C:\\xampp\\htdocs\\moodle\\public/local/parent_portal',
     ),
     'h5plib' => 
     array (
@@ -4889,6 +4896,18 @@ $cache = array (
     'invalid_state_exception' => 'C:\\xampp\\htdocs\\moodle\\public/lib/classes/exception/invalid_state_exception.php',
     'js_writer' => 'C:\\xampp\\htdocs\\moodle\\public/lib/classes/output/js_writer.php',
     'lang_string' => 'C:\\xampp\\htdocs\\moodle\\public/lib/classes/lang_string.php',
+    'local_assessments\\form\\assessment_form' => 'C:\\xampp\\htdocs\\moodle\\public/local/assessments/classes/form/assessment_form.php',
+    'local_assessments\\form\\import_form' => 'C:\\xampp\\htdocs\\moodle\\public/local/assessments/classes/form/import_form.php',
+    'local_message_audit\\form\\keyword_form' => 'C:\\xampp\\htdocs\\moodle\\public/local/message_audit/classes/form/keyword_form.php',
+    'local_message_audit\\observer' => 'C:\\xampp\\htdocs\\moodle\\public/local/message_audit/classes/observer.php',
+    'local_message_audit_observer' => 'C:\\xampp\\htdocs\\moodle\\public/local/message_audit/classes/observer.php',
+    'local_odoo_sync\\observer' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/classes/observer.php',
+    'local_odoo_sync\\odoo_client' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/classes/odoo_client.php',
+    'local_odoo_sync\\task\\license_expiry_reminder' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/classes/task/license_expiry_reminder.php',
+    'local_odoo_sync\\task\\push_grades_to_odoo' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/classes/task/push_grades_to_odoo.php',
+    'local_odoo_sync\\task\\sync_from_odoo' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/classes/task/sync_from_odoo.php',
+    'local_odoo_sync_observer' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/classes/observer.php',
+    'local_odoo_sync_odoo_client' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/classes/odoo_client.php',
     'logstore_database\\helper' => 'C:\\xampp\\htdocs\\moodle/public/admin/tool/log/store/database/classes/helper.php',
     'logstore_database\\log\\store' => 'C:\\xampp\\htdocs\\moodle/public/admin/tool/log/store/database/classes/log/store.php',
     'logstore_database\\privacy\\provider' => 'C:\\xampp\\htdocs\\moodle/public/admin/tool/log/store/database/classes/privacy/provider.php',
@@ -7586,9 +7605,14 @@ $cache = array (
       array (
         'boost' => 'C:\\xampp\\htdocs\\moodle\\public/theme/boost/lib.php',
         'classic' => 'C:\\xampp\\htdocs\\moodle\\public/theme/classic/lib.php',
+        'school' => 'C:\\xampp\\htdocs\\moodle\\public/theme/school/lib.php',
       ),
       'local' => 
       array (
+        'assessments' => 'C:\\xampp\\htdocs\\moodle\\public/local/assessments/lib.php',
+        'message_audit' => 'C:\\xampp\\htdocs\\moodle\\public/local/message_audit/lib.php',
+        'odoo_sync' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/lib.php',
+        'parent_portal' => 'C:\\xampp\\htdocs\\moodle\\public/local/parent_portal/lib.php',
       ),
       'h5plib' => 
       array (
@@ -7939,6 +7963,10 @@ $cache = array (
       ),
       'local' => 
       array (
+        'assessments' => 'C:\\xampp\\htdocs\\moodle\\public/local/assessments/settings.php',
+        'message_audit' => 'C:\\xampp\\htdocs\\moodle\\public/local/message_audit/settings.php',
+        'odoo_sync' => 'C:\\xampp\\htdocs\\moodle\\public/local/odoo_sync/settings.php',
+        'parent_portal' => 'C:\\xampp\\htdocs\\moodle\\public/local/parent_portal/settings.php',
       ),
       'h5plib' => 
       array (

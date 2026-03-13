@@ -1,8 +1,8 @@
 RewriteEngine On
+RewriteBase /moodle/
 
-# Allow everything under public/ to be served normally.
-RewriteRule ^public/ - [L]
-
-# Block direct access to any other files/directories under /moodle.
-RewriteRule ^.* - [R=404]
+# Internally rewrite /moodle/ and /moodle/* to public/ so the app is served from public/.
+# This avoids running the root index.php (which throws) and makes /moodle/public/ work as /moodle/.
+RewriteRule ^$ public/ [L]
+RewriteRule ^(?!public/)(.*)$ public/$1 [L]
 

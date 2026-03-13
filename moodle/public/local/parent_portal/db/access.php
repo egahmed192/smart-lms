@@ -15,12 +15,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
+    // view_child_data: assign to the "Parent" role via Site administration → Users → Permissions
+    // (Moodle has no built-in "parent" archetype; use a custom role with shortname "parent".)
     'local/parent_portal:view_child_data' => [
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
-            'parent' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         ],
     ],
     'local/parent_portal:manage_relationships' => [
