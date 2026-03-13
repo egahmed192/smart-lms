@@ -24,6 +24,7 @@ class observer {
      * @param \core\event\user_loggedin $event
      */
     public static function user_loggedin(\core\event\user_loggedin $event): void {
+        require_once(__DIR__ . '/../lib.php');
         $userid = $event->userid;
         if (local_odoo_sync_is_license_valid($userid)) {
             return;

@@ -1,0 +1,7 @@
+# Prevent Apache child crash (VirtualProtect/exit 255) when loading Moodle
+php_flag opcache.enable Off
+php_value opcache.enable_cli 0
+# Show errors for debugging (optional: remove in production)
+php_flag display_errors On
+php_value log_errors 1
+php_value error_reporting 32767

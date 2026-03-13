@@ -6,14 +6,14 @@ $CFG = new stdClass();
 
 $CFG->dbtype    = 'mariadb';
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = 'localhost';
+$CFG->dbhost    = '127.0.0.1';
 $CFG->dbname    = 'moodle';
-$CFG->dbuser    = 'root';
-$CFG->dbpass    = '123456';
+$CFG->dbuser    = 'root';   // MySQL user
+$CFG->dbpass    = '';       // No password (XAMPP default)
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
-  'dbport' => 3307,
+  'dbport' => 3306,         // MySQL on 3306
   'dbsocket' => '',
   'dbcollation' => 'utf8mb4_unicode_ci',
 );

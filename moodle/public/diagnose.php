@@ -30,13 +30,13 @@ if (!file_exists($configpath)) {
 
 // 4. Read config (parse manually to avoid loading setup.php which may crash)
 $config = file_get_contents($configpath);
-$dbhost = 'localhost';
-$dbport = 3307;
+$dbhost = '127.0.0.1';
+$dbport = 3306;
 $dbname = 'moodle';
 $dbuser = 'root';
-$dbpass = '123456';
+$dbpass = '';
 if (preg_match("/dbhost\s*=\s*'([^']*)'/", $config, $m)) $dbhost = $m[1];
-if (preg_match("/dbport['\s]*=>\s*'?(\d+)'/", $config, $m)) $dbport = (int)$m[1];
+if (preg_match("/dbport['\s]*=>\s*'?(\d+)/", $config, $m)) $dbport = (int)$m[1];
 if (preg_match("/dbname\s*=\s*'([^']*)'/", $config, $m)) $dbname = $m[1];
 if (preg_match("/dbuser\s*=\s*'([^']*)'/", $config, $m)) $dbuser = $m[1];
 if (preg_match("/dbpass\s*=\s*'([^']*)'/", $config, $m)) $dbpass = $m[1];

@@ -864,7 +864,12 @@ $cache = ' . var_export($cache, true) . ';
      */
     protected static function fetch_component_source(string $key) {
         if (null === self::$componentsource) {
-            self::$componentsource = (array) json_decode(file_get_contents(dirname(__DIR__, 3) . '/lib/components.json'));
+            global $CFG;
+            // In split layout (dirroot = .../moodle/public), components.json is in .../moodle/lib/
+            $path = isset($CFG->dirroot) && str_ends_with(str_replace('\\', '/', $CFG->dirroot), '/public')
+                ? dirname($CFG->dirroot) . '/lib/components.json'
+                : (isset($CFG->dirroot) ? $CFG->dirroot : dirname(__DIR__, 3)) . '/lib/components.json';
+            self::$componentsource = (array) json_decode(file_get_contents($path));
         }
 
         return !empty(self::$componentsource[$key]) ? (array) self::$componentsource[$key] : [];
