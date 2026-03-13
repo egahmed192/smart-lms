@@ -234,7 +234,7 @@ class sync_from_odoo extends \core\task\scheduled_task {
         $studentrole,
         \context_system $sysctx,
         $manualplugin
-    ): void {
+    ): ?\stdClass {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/user/lib.php');
 

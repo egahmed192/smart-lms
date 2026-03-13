@@ -1,6 +1,42 @@
 # Moodle–Odoo Integration: UI Testing Guide
 
-Follow these steps **in order** to test every part of the plan from the Moodle (and Odoo) UI. Replace `https://your-moodle-site` with your actual Moodle URL. **If you use XAMPP with the moodle folder in htdocs:** use `http://localhost:8080/moodle` (the app is served from the `public/` subfolder via .htaccess).
+Follow these steps to **check all updates and test** that the functional and integration requirements work in the UI.
+
+**Your Moodle URL (XAMPP):** `http://localhost:8080/moodle`  
+*(The app is served from the `public/` subfolder via Apache; use the link above, not `/moodle/public`.)*
+
+---
+
+## How to check all updates – requirement map
+
+| # | Requirement | Where to test in the UI | Section below |
+|---|-------------|-------------------------|---------------|
+| **1** | **Parent account access & student relationship** – parent can view linked students only | Parent dashboard; add/view relationships as admin; parent cannot see other students | Part 4 |
+| **2** | **Monitoring teacher–parent–student messaging** – all messages logged; admin can view; keyword flagging; users informed; student–parent restricted to teachers/supervisors | Message audit log; keyword rules; bulk messaging; “messages monitored” notice; try student→parent message (blocked) | Part 5 |
+| **3** | **Odoo integration & data sync** – students, courses, relations sync from Odoo (master) | Odoo sync settings; Sync status page; Scheduled task “Sync from Odoo”; users/courses after sync | Part 2 |
+| **4** | **Grades & assessments** – assessments (public/secretive), evaluations, secret code, total score, permissions, Excel import, announcement date | Course assessments list; add assessment; evaluations; export secret codes; import Excel; announcement date hides grades | Part 6 |
+| **5** | **License sync with Odoo** – expiry blocks access; parent with multiple students restricted if any expired | Log in as expired user → blocked page; parent with one expired child sees “license expired” for that child | Part 3, Part 4.2 |
+| **6** | **Custom school app** – theme and interface for admin, teacher, student, parent | School theme; roles and menus for each user type | Part 1, Part 8 |
+
+---
+
+## Direct links (bookmark these for testing)
+
+| What | URL |
+|------|-----|
+| Moodle home | http://localhost:8080/moodle/ |
+| Site administration | http://localhost:8080/moodle/admin/index.php |
+| Odoo sync settings | Site admin → Plugins → Local plugins → **Odoo sync** (or Settings → Odoo sync) |
+| Sync status | http://localhost:8080/moodle/local/odoo_sync/status.php |
+| Scheduled tasks | http://localhost:8080/moodle/admin/tool/task/scheduledtasks.php |
+| Parent portal (manage relationships) | http://localhost:8080/moodle/local/parent_portal/index.php |
+| Parent dashboard (My children) | http://localhost:8080/moodle/local/parent_portal/dashboard.php |
+| Message audit log | http://localhost:8080/moodle/local/message_audit/index.php |
+| Keyword rules | http://localhost:8080/moodle/local/message_audit/keywords.php |
+| Bulk message | http://localhost:8080/moodle/local/message_audit/bulk.php |
+| Blocked page (expired license) | http://localhost:8080/moodle/local/odoo_sync/blocked.php |
+| Course assessments (replace COURSE_ID) | http://localhost:8080/moodle/local/assessments/index.php?id=COURSE_ID |
+| Export secret codes | http://localhost:8080/moodle/local/assessments/export_codes.php |
 
 ---
 
@@ -12,19 +48,22 @@ Follow these steps **in order** to test every part of the plan from the Moodle (
 
 ---
 
-## Part 1: Site setup and theme
+## Part 1: Site setup and theme (Requirement 6 – custom school app)
 
 ### 1.1 Enable the School theme
 
 1. Log in as **Administrator**.
-2. Go to **Site administration** (gear icon or `/admin`) → **Appearance** → **Themes** → **Theme settings**.
-3. Set **Default theme** (and optionally **Allow user themes**) to **School**.
-4. Save.
-5. **Check:** After refresh, the site uses the School theme (same look as Boost; role links may appear where the theme uses them).
+2. Go to **Site administration** → **Appearance** → **Themes** → **Theme settings**.  
+   *(You may see: General, Users, Courses, Grades, Plugins, **Appearance**, Server, Reports… → under Appearance open **Themes**, then **Theme settings**.)*
+3. On **Theme settings**, find **Default theme**. The dropdown lists: Boost, Classic, and one that may show as **"School"** or **"[[pluginname]]"** (that one is the School theme).
+4. Set **Default theme** to **School** (choose the option that shows **[[pluginname]]** if "School" doesn’t appear).
+5. Click **Save changes**.
+6. **If you still see [[pluginname]] in the list:** go to **Site administration** → **Development** → **Purge all caches**, then **Purge all caches** again. The label should then show **School**.
+7. **Check:** Open the site front page in a new tab or refresh; the site uses the School theme.
 
 ---
 
-## Part 2: Odoo sync (local_odoo_sync)
+## Part 2: Odoo sync (Requirement 3 – Odoo integration & data sync)
 
 ### 2.1 Configure Odoo API
 
@@ -55,7 +94,7 @@ Follow these steps **in order** to test every part of the plan from the Moodle (
 
 ---
 
-## Part 3: License enforcement
+## Part 3: License enforcement (Requirement 5 – license sync with Odoo)
 
 ### 3.1 When license is valid
 
@@ -78,7 +117,7 @@ Follow these steps **in order** to test every part of the plan from the Moodle (
 
 ---
 
-## Part 4: Parent–student relationships (local_parent_portal)
+## Part 4: Parent–student relationships (Requirement 1 – parent access & student relationship)
 
 ### 4.1 Admin: View / manage relationships
 
@@ -108,7 +147,7 @@ Follow these steps **in order** to test every part of the plan from the Moodle (
 
 ---
 
-## Part 5: Messaging audit (local_message_audit)
+## Part 5: Messaging audit (Requirement 2 – monitoring teacher–parent–student messaging)
 
 ### 5.1 View message log
 
@@ -146,7 +185,7 @@ Follow these steps **in order** to test every part of the plan from the Moodle (
 
 ---
 
-## Part 6: Assessments (local_assessments)
+## Part 6: Assessments (Requirement 4 – grades and assessment management)
 
 Assessments are **per course**. You need a course where you are Teacher or have assessment management rights.
 
@@ -238,4 +277,20 @@ Assessments are **per course**. You need a course where you are Teacher or have 
 
 ---
 
-*Replace `https://your-moodle-site` with your real Moodle base URL (e.g. `http://localhost/moodle/public`) when opening the direct links.*
+---
+
+## Quick test order (minimal run)
+
+Do this once to confirm everything works:
+
+1. **Admin:** Log in → **Site administration** → **Appearance** → **Themes** → set **School** theme. Save.
+2. **Admin:** **Site administration** → **Plugins** → **Local plugins** → **Odoo sync** → set API URL, user, password. Save. Then **Sync status** (or `/local/odoo_sync/status.php`) → run **Scheduled tasks** → **Sync from Odoo** → Run now.
+3. **Admin:** **Site administration** → **Users** → **Parent portal** (or `/local/parent_portal/index.php`) → Add relationship (Parent + Student). Check list.
+4. **Parent:** Log in as that parent → open **My children** (`/local/parent_portal/dashboard.php`) → see the child → click child → see Child overview. Try `/local/parent_portal/child.php?studentid=OTHER_ID` → must be denied.
+5. **Admin:** **Site administration** → **Reports** → **Message audit** (`/local/message_audit/index.php`) → see log; **Keyword rules** → add a keyword; **Send bulk message** (`/local/message_audit/bulk.php`) → choose target → Update count → send. Check log again.
+6. **Student:** Log in → try to message a parent → must be blocked (student–parent restriction).
+7. **License:** In DB table `local_odoo_sync_lic` set one user’s license expired (or use Odoo). Log in as that user → must redirect to `/local/odoo_sync/blocked.php`.
+8. **Teacher:** Log in → open a course → go to `/local/assessments/index.php?id=COURSE_ID` → Add assessment (Public) → Evaluations → add marks. **Admin/Manager:** Export secret codes (`/local/assessments/export_codes.php`); Import evaluations if available.
+9. **Scheduled task:** **Site administration** → **Server** → **Scheduled tasks** → **Push grades to Odoo** → Run now. Check Odoo/API for updated grades.
+
+**Base URL for direct links:** `http://localhost:8080/moodle` (e.g. `http://localhost:8080/moodle/local/parent_portal/dashboard.php`).

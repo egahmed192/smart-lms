@@ -6,15 +6,16 @@
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY.
-//
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Language strings for theme_school.
+ * @package   theme_school
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100701;
-$plugin->requires  = 2025092600;
-$plugin->component = 'local_odoo_sync';
-$plugin->maturity  = MATURITY_ALPHA;
+$string['pluginname'] = 'School';
+$string['configtitle'] = 'School';
+$string['region-side-pre'] = 'Right';
