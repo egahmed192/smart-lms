@@ -32,4 +32,14 @@ class observer {
         local_odoo_sync_license_audit_log($userid, 'access_blocked');
         redirect(new \moodle_url('/local/odoo_sync/blocked.php'));
     }
+
+    /**
+     * When a course is deleted, remove its Odoo course mapping so no orphan rows remain.
+     *
+     * @param \core\event\course_deleted $event
+     */
+    public static function course_deleted(\core\event\course_deleted $event): void {
+        global $DB;
+        $DB->delete_records('local_odoo_sync_course_map', ['courseid' => $event->objectid]);
+    }
 }

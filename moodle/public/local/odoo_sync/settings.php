@@ -60,5 +60,16 @@ if ($hassiteconfig && has_capability('local/odoo_sync:manage', context_system::i
         '7',
         PARAM_INT
     ));
+    $settings->add(new admin_setting_configselect(
+        'local_odoo_sync/when_student_not_in_odoo',
+        get_string('when_student_not_in_odoo', 'local_odoo_sync'),
+        get_string('when_student_not_in_odoo_help', 'local_odoo_sync'),
+        'unenrol_from_odoo_courses',
+        [
+            'do_nothing' => get_string('when_student_not_in_odoo_do_nothing', 'local_odoo_sync'),
+            'unenrol_from_odoo_courses' => get_string('when_student_not_in_odoo_unenrol', 'local_odoo_sync'),
+            'suspend_user' => get_string('when_student_not_in_odoo_suspend', 'local_odoo_sync'),
+        ]
+    ));
     $ADMIN->add('localplugins', $settings);
 }

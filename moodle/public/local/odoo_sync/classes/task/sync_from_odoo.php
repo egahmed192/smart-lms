@@ -18,6 +18,9 @@ defined('MOODLE_INTERNAL') || die();
 
 class sync_from_odoo extends \core\task\scheduled_task {
 
+    /** @var array Cache of courseids by "yearid_standardid" for this run */
+    private $courseids_cache = [];
+
     public function get_name(): string {
         return get_string('task_sync_from_odoo', 'local_odoo_sync');
     }
@@ -58,6 +61,13 @@ class sync_from_odoo extends \core\task\scheduled_task {
             return;
         }
 
+        // Remove orphan course map rows (course was deleted without event or legacy data).
+        $validcourseids = $DB->get_fieldset_sql("SELECT id FROM {course}");
+        if (!empty($validcourseids)) {
+            list($insql, $params) = $DB->get_in_or_equal($validcourseids, SQL_PARAMS_NAMED, 'cid');
+            $DB->delete_records_select('local_odoo_sync_course_map', "courseid NOT IN ($insql)", $params);
+        }
+
         // Fetch all students. API returns max 100 per search and has no offset/limit; use name-prefix iteration.
         $allstudents = $client->student_search_all();
 
@@ -90,6 +100,18 @@ class sync_from_odoo extends \core\task\scheduled_task {
                 mtrace('Odoo sync: Link parent failed: ' . $e->getMessage());
             }
         }
+
+        // Students no longer in Odoo API: apply configured action (unenrol and/or suspend).
+        $current_odoo_student_ids = array_keys($allstudents);
+        $allmaprows = $DB->get_records_sql(
+            "SELECT userid, odoo_id FROM {local_odoo_sync_map} WHERE odoo_type = ?",
+            ['student']
+        );
+        foreach ($allmaprows as $maprow) {
+            if (!in_array((int) $maprow->odoo_id, $current_odoo_student_ids, true)) {
+                $this->handle_student_no_longer_in_odoo((int) $maprow->userid, $manualplugin);
+            }
+        }
     }
 
     private function log_failure($DB, ?int $userid, int $odooid, string $odootype, string $action, string $errmsg): void {
@@ -114,15 +136,19 @@ class sync_from_odoo extends \core\task\scheduled_task {
         if ($studentuserid === null || $guardiannationalid === '') {
             return;
         }
-        $parent = $DB->get_record_sql(
+        $parents = $DB->get_records_sql(
             "SELECT u.id FROM {user} u
               JOIN {local_odoo_sync_map} m ON m.userid = u.id
               WHERE m.odoo_type = 'parent' AND u.idnumber = ?",
             [$guardiannationalid]
         );
-        if (!$parent) {
+        if (empty($parents)) {
             return;
         }
+        if (count($parents) > 1) {
+            mtrace("Odoo sync: Multiple parents share idnumber {$guardiannationalid}; linking student to first.");
+        }
+        $parent = reset($parents);
         if ($DB->record_exists('local_parent_portal_rel', [
             'parent_userid' => $parent->id,
             'student_userid' => $studentuserid,
@@ -356,7 +382,7 @@ class sync_from_odoo extends \core\task\scheduled_task {
                 'timemodified' => time(),
             ]);
             if ($oldyear != $yearid || $oldstandard != $standardid) {
-                $this->unenrol_student_from_courses($user->id, $oldyear, $oldstandard, $manualplugin);
+                $this->unenrol_student_from_courses($user->id, $this->get_courseids_by_class($oldyear, $oldstandard), $manualplugin);
             }
         }
 
@@ -378,22 +404,35 @@ class sync_from_odoo extends \core\task\scheduled_task {
             ]);
         }
 
-        $this->enrol_student_into_courses($user->id, $yearid, $standardid, $manualplugin);
+        $this->enrol_student_into_courses($user->id, $this->get_courseids_by_class($yearid, $standardid), $manualplugin);
         return $user;
     }
 
-    private function enrol_student_into_courses(int $userid, int $yearid, int $standardid, $manualplugin): void {
-        global $DB;
-        if ($yearid === 0 && $standardid === 0) {
-            return;
+    /**
+     * Get course IDs mapped to this (year, standard). Cached per run.
+     *
+     * @param int $yearid
+     * @param int $standardid
+     * @return array of course id
+     */
+    private function get_courseids_by_class(int $yearid, int $standardid): array {
+        $key = $yearid . '_' . $standardid;
+        if (!array_key_exists($key, $this->courseids_cache)) {
+            global $DB;
+            $this->courseids_cache[$key] = $DB->get_fieldset_sql(
+                "SELECT courseid FROM {local_odoo_sync_course_map} WHERE year_apply_for_id = ? AND standard_id = ?",
+                [$yearid, $standardid]
+            ) ?: [];
         }
-        $courseids = $DB->get_fieldset_sql(
-            "SELECT courseid FROM {local_odoo_sync_course_map} WHERE year_apply_for_id = ? AND standard_id = ?",
-            [$yearid, $standardid]
-        );
+        return $this->courseids_cache[$key];
+    }
+
+    private function enrol_student_into_courses(int $userid, array $courseids, $manualplugin): void {
+        global $DB;
         foreach ($courseids as $courseid) {
             $instance = $DB->get_record('enrol', ['courseid' => $courseid, 'enrol' => 'manual']);
             if (!$instance) {
+                mtrace("Odoo sync: Course {$courseid} has no manual enrolment instance; skipping.");
                 continue;
             }
             $ue = $DB->get_record('user_enrolments', ['enrolid' => $instance->id, 'userid' => $userid]);
@@ -403,24 +442,56 @@ class sync_from_odoo extends \core\task\scheduled_task {
         }
     }
 
-    private function unenrol_student_from_courses(int $userid, int $yearid, int $standardid, $manualplugin): void {
+    private function unenrol_student_from_courses(int $userid, array $courseids, $manualplugin): void {
         global $DB;
-        if ($yearid === 0 && $standardid === 0) {
-            return;
-        }
-        $courseids = $DB->get_fieldset_sql(
-            "SELECT courseid FROM {local_odoo_sync_course_map} WHERE year_apply_for_id = ? AND standard_id = ?",
-            [$yearid, $standardid]
-        );
         foreach ($courseids as $courseid) {
             $instance = $DB->get_record('enrol', ['courseid' => $courseid, 'enrol' => 'manual']);
             if (!$instance) {
+                mtrace("Odoo sync: Course {$courseid} has no manual enrolment instance; skipping unenrol.");
                 continue;
             }
             $ue = $DB->get_record('user_enrolments', ['enrolid' => $instance->id, 'userid' => $userid]);
             if ($ue) {
                 $manualplugin->unenrol_user($instance, $userid);
             }
+        }
+    }
+
+    /**
+     * Apply configured action when a student is no longer returned by the Odoo API (e.g. left school).
+     *
+     * @param int $userid Moodle user id
+     * @param \enrol_manual_plugin $manualplugin
+     */
+    private function handle_student_no_longer_in_odoo(int $userid, $manualplugin): void {
+        global $DB, $CFG;
+        if (!$DB->record_exists('user', ['id' => $userid])) {
+            return;
+        }
+        $action = get_config('local_odoo_sync', 'when_student_not_in_odoo');
+        if ($action === false || $action === 'do_nothing') {
+            return;
+        }
+        if ($action === 'unenrol_from_odoo_courses' || $action === 'suspend_user') {
+            $courseids = $DB->get_fieldset_sql("SELECT courseid FROM {local_odoo_sync_course_map}");
+            foreach ($courseids as $courseid) {
+                $instance = $DB->get_record('enrol', ['courseid' => $courseid, 'enrol' => 'manual']);
+                if (!$instance) {
+                    continue;
+                }
+                $ue = $DB->get_record('user_enrolments', ['enrolid' => $instance->id, 'userid' => $userid]);
+                if ($ue) {
+                    $manualplugin->unenrol_user($instance, $userid);
+                }
+            }
+            mtrace("Odoo sync: Unenrolled user {$userid} from Odoo-mapped courses (student no longer in Odoo).");
+        }
+        if ($action === 'suspend_user') {
+            require_once($CFG->dirroot . '/user/lib.php');
+            $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
+            $user->suspended = 1;
+            user_update_user($user, false, false);
+            mtrace("Odoo sync: Suspended user {$userid} (student no longer in Odoo).");
         }
     }
 

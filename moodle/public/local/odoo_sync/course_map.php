@@ -21,10 +21,29 @@ $PAGE->set_heading(get_string('course_map_heading', 'local_odoo_sync'));
 
 global $DB;
 
-// Delete mapping.
+// Delete mapping: unenrol affected students from that course, then remove the row.
 $deleteid = optional_param('delete', 0, PARAM_INT);
 if ($deleteid > 0 && confirm_sesskey()) {
-    $DB->delete_records('local_odoo_sync_course_map', ['id' => $deleteid]);
+    $row = $DB->get_record('local_odoo_sync_course_map', ['id' => $deleteid]);
+    if ($row) {
+        $userids = $DB->get_fieldset_sql(
+            "SELECT userid FROM {local_odoo_sync_map} WHERE year_apply_for_id = ? AND standard_id = ? AND odoo_type = ?",
+            [$row->year_apply_for_id, $row->standard_id, 'student']
+        );
+        $manualplugin = enrol_get_plugin('manual');
+        if ($manualplugin && $userids) {
+            $instance = $DB->get_record('enrol', ['courseid' => $row->courseid, 'enrol' => 'manual']);
+            if ($instance) {
+                foreach ($userids as $uid) {
+                    $ue = $DB->get_record('user_enrolments', ['enrolid' => $instance->id, 'userid' => $uid]);
+                    if ($ue) {
+                        $manualplugin->unenrol_user($instance, (int) $uid);
+                    }
+                }
+            }
+        }
+        $DB->delete_records('local_odoo_sync_course_map', ['id' => $deleteid]);
+    }
     redirect(new moodle_url('/local/odoo_sync/course_map.php'), get_string('mapping_removed', 'local_odoo_sync'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
@@ -35,13 +54,20 @@ $addstandard = optional_param('addstandard', 0, PARAM_INT);
 if ($addcourse > 0 && $addyear > 0 && $addstandard > 0 && confirm_sesskey()) {
     $exists = $DB->get_record('local_odoo_sync_course_map', ['courseid' => $addcourse]);
     if (!$exists) {
+        $hasmanual = $DB->record_exists('enrol', ['courseid' => $addcourse, 'enrol' => 'manual']);
         $DB->insert_record('local_odoo_sync_course_map', (object)[
             'courseid' => $addcourse,
             'year_apply_for_id' => $addyear,
             'standard_id' => $addstandard,
             'timemodified' => time(),
         ]);
-        redirect(new moodle_url('/local/odoo_sync/course_map.php'), get_string('mapping_added', 'local_odoo_sync'), null, \core\output\notification::NOTIFY_SUCCESS);
+        $message = get_string('mapping_added', 'local_odoo_sync');
+        $type = \core\output\notification::NOTIFY_SUCCESS;
+        if (!$hasmanual) {
+            $message .= ' ' . get_string('mapping_warning_no_manual_enrol', 'local_odoo_sync');
+            $type = \core\output\notification::NOTIFY_WARNING;
+        }
+        redirect(new moodle_url('/local/odoo_sync/course_map.php'), $message, null, $type);
     }
 }
 
@@ -55,7 +81,7 @@ $allcourses = $DB->get_records_sql(
 $mappings = $DB->get_records_sql(
     "SELECT m.id, m.courseid, m.year_apply_for_id, m.standard_id, c.fullname, c.shortname
        FROM {local_odoo_sync_course_map} m
-       JOIN {course} c ON c.id = m.courseid
+       LEFT JOIN {course} c ON c.id = m.courseid
        ORDER BY m.year_apply_for_id, m.standard_id"
 );
 
@@ -108,8 +134,11 @@ if (empty($mappings)) {
     }
     foreach ($mappings as $m) {
         $delurl = new moodle_url('/local/odoo_sync/course_map.php', ['delete' => $m->id, 'sesskey' => sesskey()]);
+        $courselabel = trim((string) ($m->fullname ?? '')) !== ''
+            ? (s($m->fullname) . ' <small>(' . s($m->shortname ?? '') . ')</small>')
+            : get_string('course_deleted_id', 'local_odoo_sync', (int) $m->courseid);
         $table->data[] = [
-            s($m->fullname) . ' <small>(' . s($m->shortname) . ')</small>',
+            $courselabel,
             s($yearnames[$m->year_apply_for_id] ?? 'id ' . $m->year_apply_for_id),
             s($standardnames[$m->standard_id] ?? 'id ' . $m->standard_id),
             $OUTPUT->action_link($delurl, get_string('delete_mapping', 'local_odoo_sync'), null, ['class' => 'btn btn-sm btn-outline-danger']),

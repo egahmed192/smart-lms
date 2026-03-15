@@ -19,4 +19,8 @@ $observers = [
         'eventname' => '\core\event\user_loggedin',
         'callback' => '\local_odoo_sync\observer::user_loggedin',
     ],
+    [
+        'eventname' => '\core\event\course_deleted',
+        'callback' => '\local_odoo_sync\observer::course_deleted',
+    ],
 ];
