@@ -41,5 +41,29 @@ function xmldb_local_odoo_sync_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025100700, 'local', 'odoo_sync');
     }
 
+    if ($oldversion < 2025101300) {
+        $table = new xmldb_table('local_odoo_sync_year');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('odoo_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('display_name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('odoo_id', XMLDB_KEY_UNIQUE, ['odoo_id']);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        $table = new xmldb_table('local_odoo_sync_standard');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('odoo_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('display_name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('odoo_id', XMLDB_KEY_UNIQUE, ['odoo_id']);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_plugin_savepoint(true, 2025101300, 'local', 'odoo_sync');
+    }
+
     return true;
 }

@@ -215,6 +215,10 @@ All documented endpoints respond as expected. Authentication is session-based (c
 - Search by **`id`** (e.g. `params: {"id": 271}`) returns exactly one student when the id exists, or `not_found` when it does not. Student ids in production are not necessarily contiguous (e.g. 271, 276, 279, …).
 - To obtain **all** students (or parents), the Moodle sync uses **name-prefix iteration**: it calls search once per Arabic letter (ا, أ, آ, إ, ب, ت, … ي), merges results by id, and thus avoids the 100-per-call cap. Sequential id scan (e.g. 1 to N) is possible but requires knowing the id range and issues one request per id.
 
+**Class / grade (year and standard):**
+- Each student has **`year_apply_for`** (e.g. `{"id": 27, "display_name": "الصف الرابع - الابتدائي"}`) and **`standard_id`** (e.g. `{"id": 125, "display_name": "4/A ابتدائى"}`). These represent grade level and class/section.
+- The API does **not** expose list endpoints for years or standards (e.g. `/api/lms/year/list`, `/api/lms/standard/list` return 404). Moodle sync therefore **derives** the list of years and standards from the student search results, stores them locally, and uses them for **course mapping**: an admin maps Moodle courses to (year, standard) so that students are auto-enrolled in all courses linked to their class.
+
 ---
 
 ### 2.2 Update Student LMS Credentials — `POST /api/lms/student/update`

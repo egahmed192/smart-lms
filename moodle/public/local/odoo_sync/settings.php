@@ -21,6 +21,12 @@ if ($hassiteconfig && has_capability('local/odoo_sync:manage', context_system::i
         new moodle_url('/local/odoo_sync/status.php'),
         'local/odoo_sync:manage'
     ));
+    $ADMIN->add('localplugins', new admin_externalpage(
+        'local_odoo_sync_course_map',
+        get_string('course_map', 'local_odoo_sync'),
+        new moodle_url('/local/odoo_sync/course_map.php'),
+        'local/odoo_sync:manage'
+    ));
     $settings = new admin_settingpage('local_odoo_sync', get_string('pluginname', 'local_odoo_sync'));
     $settings->add(new admin_setting_description(
         'local_odoo_sync_statuslink',

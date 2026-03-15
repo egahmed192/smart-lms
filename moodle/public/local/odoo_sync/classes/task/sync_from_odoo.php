@@ -61,6 +61,9 @@ class sync_from_odoo extends \core\task\scheduled_task {
         // Fetch all students. API returns max 100 per search and has no offset/limit; use name-prefix iteration.
         $allstudents = $client->student_search_all();
 
+        // Extract and store Odoo years (grade level) and standards (class) from student data for course mapping.
+        $this->sync_years_and_standards_from_students($allstudents);
+
         // Sync parents first so we can link by guardian_national_id. Same name-prefix strategy for all parents.
         $allparents = $client->parent_search_all();
         foreach ($allparents as $odooParent) {
@@ -134,6 +137,61 @@ class sync_from_odoo extends \core\task\scheduled_task {
             'timecreated' => time(),
             'source' => 'odoo',
         ]);
+    }
+
+    /**
+     * Extract unique year_apply_for and standard_id from student list and upsert into local_odoo_sync_year and local_odoo_sync_standard.
+     * Odoo API does not expose year/standard list endpoints; we derive them from student data for course mapping.
+     *
+     * @param array $allstudents Map of odoo_id => student record (with year_apply_for, standard_id)
+     */
+    private function sync_years_and_standards_from_students(array $allstudents): void {
+        global $DB;
+        $now = time();
+        $years = [];
+        $standards = [];
+        foreach ($allstudents as $s) {
+            if (!empty($s['year_apply_for']['id'])) {
+                $id = (int) $s['year_apply_for']['id'];
+                $years[$id] = trim((string) ($s['year_apply_for']['display_name'] ?? ''));
+            }
+            if (!empty($s['standard_id']['id'])) {
+                $id = (int) $s['standard_id']['id'];
+                $standards[$id] = trim((string) ($s['standard_id']['display_name'] ?? ''));
+            }
+        }
+        foreach ($years as $odoo_id => $display_name) {
+            $existing = $DB->get_record('local_odoo_sync_year', ['odoo_id' => $odoo_id]);
+            if ($existing) {
+                $DB->update_record('local_odoo_sync_year', (object)[
+                    'id' => $existing->id,
+                    'display_name' => $display_name,
+                    'timemodified' => $now,
+                ]);
+            } else {
+                $DB->insert_record('local_odoo_sync_year', (object)[
+                    'odoo_id' => $odoo_id,
+                    'display_name' => $display_name,
+                    'timemodified' => $now,
+                ]);
+            }
+        }
+        foreach ($standards as $odoo_id => $display_name) {
+            $existing = $DB->get_record('local_odoo_sync_standard', ['odoo_id' => $odoo_id]);
+            if ($existing) {
+                $DB->update_record('local_odoo_sync_standard', (object)[
+                    'id' => $existing->id,
+                    'display_name' => $display_name,
+                    'timemodified' => $now,
+                ]);
+            } else {
+                $DB->insert_record('local_odoo_sync_standard', (object)[
+                    'odoo_id' => $odoo_id,
+                    'display_name' => $display_name,
+                    'timemodified' => $now,
+                ]);
+            }
+        }
     }
 
     /**

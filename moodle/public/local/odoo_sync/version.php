@@ -14,7 +14,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100701;
+$plugin->version   = 2025101300;
 $plugin->requires  = 2025092600;
 $plugin->component = 'local_odoo_sync';
 $plugin->maturity  = MATURITY_ALPHA;
