@@ -40,6 +40,8 @@ class odoo_client {
         $this->password = $password;
         $this->curl = new \curl();
         $this->sessioncookie = null;
+        // Avoid HTTP 0 on Windows/SSL so we get real Set-Cookie and session is accepted on next request.
+        $this->curl->setopt(['CURLOPT_SSL_VERIFYPEER' => 0, 'CURLOPT_SSL_VERIFYHOST' => 0]);
     }
 
     /**
@@ -48,10 +50,11 @@ class odoo_client {
      * @param string $path e.g. /api/lms/login
      * @param array $params
      * @param int $id
+     * @param bool $isretry Internal: true when retrying after session expiry
      * @return array decoded result
      * @throws \moodle_exception on API error
      */
-    public function call(string $path, array $params = [], int $id = 1): array {
+    public function call(string $path, array $params = [], int $id = 1, bool $isretry = false): array {
         $url = $this->baseurl . $path;
         $body = json_encode([
             'jsonrpc' => '2.0',
@@ -64,39 +67,70 @@ class odoo_client {
             $this->curl->setHeader('Cookie: ' . $this->sessioncookie);
         }
         $response = $this->curl->post($url, $body);
-        $httpcode = $this->curl->get_info()->http_code;
-        if ($httpcode < 200 || $httpcode >= 300) {
-            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', null, 'HTTP ' . $httpcode);
-        }
+        $httpcode = (int) $this->curl->get_info()->http_code;
         $decoded = json_decode($response, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', null, 'Invalid JSON');
+        $validjson = (json_last_error() === JSON_ERROR_NONE);
+
+        // JSON-RPC top-level error (e.g. "Odoo Session Expired"). Retry once after re-login.
+        if ($validjson && !empty($decoded['error'])) {
+            $err = $decoded['error'];
+            $msg = is_string($err) ? $err : ($err['message'] ?? 'Unknown API error');
+            if (!$isretry && $path !== '/api/lms/login' &&
+                (stripos($msg, 'session') !== false && stripos($msg, 'expired') !== false)) {
+                $this->sessioncookie = null;
+                $this->login();
+                return $this->call($path, $params, $id, true);
+            }
+            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', $msg);
+        }
+
+        $hasresult = ($validjson && isset($decoded['result']));
+        $result = $hasresult ? $decoded['result'] : null;
+
+        // If body is valid JSON with a successful result, accept it even when http_code is 0
+        // (e.g. some Windows/SSL setups report 0 despite a successful response).
+        if ($hasresult && $result !== null) {
+            if (!empty($result['success']) || !isset($result['error'])) {
+                // Session must come from Set-Cookie only. The JSON result.data.session_id is NOT
+                // the cookie value the server expects for subsequent requests (verified against API).
+                $rawheaders = $this->curl->get_raw_response();
+                $headerblock = is_array($rawheaders) ? implode("\n", $rawheaders) : (string) $rawheaders;
+                if (preg_match('/Set-Cookie:\s*(session_id=[^;\r\n]+)/i', $headerblock, $m)) {
+                    $this->sessioncookie = trim($m[1]);
+                }
+                return $result;
+            }
+            $detail = $result['message'] ?? $result['error'] ?? 'Unknown API error';
+            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', $detail);
+        }
+
+        if ($httpcode < 200 || $httpcode >= 300) {
+            $detail = 'HTTP ' . $httpcode . ' ' . (trim($response) !== '' ? ': ' . substr(trim($response), 0, 200) : '');
+            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', $detail);
+        }
+        if (!$validjson) {
+            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', 'Invalid JSON: ' . json_last_error_msg());
         }
         if (!isset($decoded['result'])) {
-            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', null, 'No result');
+            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', 'No result in response');
         }
-        $result = $decoded['result'];
-        if (!empty($result['success']) === false && isset($result['error'])) {
-            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '', null, $result['message'] ?? $result['error']);
-        }
-        // Capture session cookie from response headers.
-        $headers = $this->curl->get_info()->raw_response_headers ?? '';
-        if (preg_match('/Set-Cookie:\s*([^\r\n]+)/i', $headers, $m)) {
-            $this->sessioncookie = trim($m[1]);
-        }
-        return $result;
+        return $decoded['result'];
     }
 
     /**
-     * Login and store session.
+     * Login and store session. The server must send Set-Cookie (session_id=...) for subsequent requests to work.
      */
     public function login(): void {
         $result = $this->call('/api/lms/login', [
             'email' => $this->email,
             'password' => $this->password,
         ]);
-        if (empty($result['success']) || empty($result['data']['session_id'])) {
+        if (empty($result['success'])) {
             throw new \moodle_exception('odoo_login_failed', 'local_odoo_sync');
+        }
+        if ($this->sessioncookie === null) {
+            throw new \moodle_exception('odoo_apierror', 'local_odoo_sync', '',
+                'Login succeeded but no session cookie was received. Check SSL/connectivity so response headers are available.');
         }
     }
 
@@ -109,6 +143,53 @@ class odoo_client {
     public function student_search(array $params): array {
         $result = $this->call('/api/lms/student/search', $params, 2);
         return $result['data'] ?? ['count' => 0, 'students' => []];
+    }
+
+    /**
+     * Fetch all students by querying with multiple name prefixes and merging by id.
+     * API returns up to 100 per search and does not support offset/limit; this works around it.
+     *
+     * @return array list of student records keyed by id (same shape as student_search['students'])
+     */
+    public function student_search_all(): array {
+        $byid = [];
+        $prefixes = [
+            'ا', 'أ', 'آ', 'إ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ',
+            'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي',
+        ];
+        foreach ($prefixes as $letter) {
+            $result = $this->student_search(['name' => $letter]);
+            foreach ($result['students'] ?? [] as $s) {
+                $id = (int) ($s['id'] ?? 0);
+                if ($id) {
+                    $byid[$id] = $s;
+                }
+            }
+        }
+        return $byid;
+    }
+
+    /**
+     * Fetch all parents by querying with multiple name prefixes and merging by id.
+     *
+     * @return array list of parent records keyed by id
+     */
+    public function parent_search_all(): array {
+        $byid = [];
+        $prefixes = [
+            'ا', 'أ', 'آ', 'إ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ',
+            'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي',
+        ];
+        foreach ($prefixes as $letter) {
+            $result = $this->parent_search(['name' => $letter]);
+            foreach ($result['parents'] ?? [] as $p) {
+                $id = (int) ($p['id'] ?? 0);
+                if ($id) {
+                    $byid[$id] = $p;
+                }
+            }
+        }
+        return $byid;
     }
 
     /**

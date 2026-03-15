@@ -18,7 +18,7 @@ $tasks = [
     [
         'classname' => 'local_odoo_sync\task\sync_from_odoo',
         'blocking' => 0,
-        'minute' => '*/15',
+        'minute' => '*',
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
@@ -27,8 +27,8 @@ $tasks = [
     [
         'classname' => 'local_odoo_sync\task\push_grades_to_odoo',
         'blocking' => 0,
-        'minute' => '0',
-        'hour' => '*/6',
+        'minute' => '*',
+        'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*',
@@ -36,8 +36,8 @@ $tasks = [
     [
         'classname' => 'local_odoo_sync\task\license_expiry_reminder',
         'blocking' => 0,
-        'minute' => '0',
-        'hour' => '9',
+        'minute' => '*',
+        'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*',

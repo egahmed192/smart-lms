@@ -40,6 +40,9 @@ class sync_from_odoo extends \core\task\scheduled_task {
             $client->login();
         } catch (\Throwable $e) {
             mtrace('Odoo sync: Login failed: ' . $e->getMessage());
+            if (!empty($e->debuginfo)) {
+                mtrace('Odoo sync: Debug: ' . $e->debuginfo);
+            }
             return;
         }
 
@@ -55,42 +58,11 @@ class sync_from_odoo extends \core\task\scheduled_task {
             return;
         }
 
-        // Fetch all students (paginate by name search).
-        $offset = 0;
-        $limit = 100;
-        $allstudents = [];
-        do {
-            $result = $client->student_search(['name' => ' ']);
-            $students = $result['students'] ?? [];
-            foreach ($students as $s) {
-                $allstudents[$s['id']] = $s;
-            }
-            if (count($students) < $limit) {
-                break;
-            }
-            $offset += $limit;
-        } while (count($students) === $limit);
+        // Fetch all students. API returns max 100 per search and has no offset/limit; use name-prefix iteration.
+        $allstudents = $client->student_search_all();
 
-        // If name search returns empty or small set, try without filter (some APIs allow).
-        if (empty($allstudents)) {
-            $result = $client->student_search(['name' => 'ا']);
-            foreach ($result['students'] ?? [] as $s) {
-                $allstudents[$s['id']] = $s;
-            }
-        }
-
-        // Sync parents first so we can link by guardian_national_id.
-        $allparents = [];
-        $result = $client->parent_search(['name' => ' ']);
-        foreach ($result['parents'] ?? [] as $p) {
-            $allparents[$p['id']] = $p;
-        }
-        if (empty($allparents)) {
-            $result = $client->parent_search(['name' => 'ا']);
-            foreach ($result['parents'] ?? [] as $p) {
-                $allparents[$p['id']] = $p;
-            }
-        }
+        // Sync parents first so we can link by guardian_national_id. Same name-prefix strategy for all parents.
+        $allparents = $client->parent_search_all();
         foreach ($allparents as $odooParent) {
             try {
                 $this->sync_one_parent($odooParent, $client, $parentrole, $sysctx);
@@ -228,6 +200,26 @@ class sync_from_odoo extends \core\task\scheduled_task {
         return true;
     }
 
+    /**
+     * Parse full name into firstname and lastname. Prefer first word / rest; fallback when empty.
+     *
+     * @param string $fullname Raw full name (may be empty or multi-word)
+     * @param string $fallbackfirst Fallback first name when fullname is empty
+     * @param string $fallbacklast Fallback last name when fullname is empty
+     * @return array [string firstname, string lastname]
+     */
+    private function parse_full_name(string $fullname, string $fallbackfirst = '', string $fallbacklast = ''): array {
+        $fullname = trim(preg_replace('/\s+/', ' ', $fullname));
+        if ($fullname === '') {
+            return [$fallbackfirst, $fallbacklast];
+        }
+        if (strpos($fullname, ' ') !== false) {
+            $parts = explode(' ', $fullname, 2);
+            return [trim($parts[0]), trim($parts[1] ?? '')];
+        }
+        return [$fullname, ''];
+    }
+
     private function sync_one_student(
         array $s,
         \local_odoo_sync\odoo_client $client,
@@ -241,7 +233,12 @@ class sync_from_odoo extends \core\task\scheduled_task {
         $odooid = (int) $s['id'];
         $yearid = isset($s['year_apply_for']['id']) ? (int) $s['year_apply_for']['id'] : 0;
         $standardid = isset($s['standard_id']['id']) ? (int) $s['standard_id']['id'] : 0;
-        $fullname = $s['student_en_full_name'] ?? $s['student_full_name'] ?? '';
+        $fullname = trim((string) ($s['student_en_full_name'] ?? $s['student_full_name'] ?? ''));
+        if ($fullname === '') {
+            $fullname = (string) ($s['student_full_name'] ?? '');
+        }
+        $sequence = $s['sequence'] ?? '';
+        list($firstname, $lastname) = $this->parse_full_name($fullname, 'Student', $sequence !== '' ? $sequence : (string) $odooid);
         $licenseDue = null;
         if (!empty($s['license_due_date'])) {
             $licenseDue = strtotime($s['license_due_date']);
@@ -263,13 +260,8 @@ class sync_from_odoo extends \core\task\scheduled_task {
             $user->deleted = 0;
             $user->username = 'odoo_student_' . $odooid;
             $user->email = $user->username . '@odoo.sync';
-            $user->firstname = trim($fullname);
-            $user->lastname = '';
-            if (strpos($fullname, ' ') !== false) {
-                $parts = explode(' ', $fullname, 2);
-                $user->firstname = $parts[0];
-                $user->lastname = $parts[1] ?? '';
-            }
+            $user->firstname = $firstname;
+            $user->lastname = $lastname;
             $user->password = hash_internal_user_password(generate_password(12));
             $user->id = user_create_user($user);
             $isnew = true;
@@ -294,6 +286,9 @@ class sync_from_odoo extends \core\task\scheduled_task {
                 mtrace("Could not push credentials for student {$odooid}: " . $e->getMessage());
             }
         } else {
+            $user->firstname = $firstname;
+            $user->lastname = $lastname;
+            user_update_user($user, false, false);
             $oldyear = $map->year_apply_for_id ?? 0;
             $oldstandard = $map->standard_id ?? 0;
             $DB->update_record('local_odoo_sync_map', (object)[
@@ -381,22 +376,20 @@ class sync_from_odoo extends \core\task\scheduled_task {
         if ($map) {
             $user = $DB->get_record('user', ['id' => $map->userid]);
         }
+        $name = trim((string) ($p['name'] ?? $p['parent_full_name'] ?? $p['display_name'] ?? ''));
+        $email = trim((string) ($p['email'] ?? $p['login'] ?? ''));
+        $idnumber = trim((string) ($p['identification_id'] ?? $p['national_id'] ?? ''));
+        list($firstname, $lastname) = $this->parse_full_name($name, 'Parent', (string) $odooid);
         if (!$user) {
             $user = new \stdClass();
             $user->auth = 'manual';
             $user->confirmed = 1;
             $user->deleted = 0;
             $user->username = 'odoo_parent_' . $odooid;
-            $user->email = !empty($p['email']) ? $p['email'] : ($user->username . '@odoo.sync');
-            $user->idnumber = $p['identification_id'] ?? '';
-            $name = $p['name'] ?? '';
-            $user->firstname = trim($name);
-            $user->lastname = '';
-            if (strpos($name, ' ') !== false) {
-                $parts = explode(' ', $name, 2);
-                $user->firstname = $parts[0];
-                $user->lastname = $parts[1] ?? '';
-            }
+            $user->email = $email !== '' ? $email : ($user->username . '@odoo.sync');
+            $user->idnumber = $idnumber;
+            $user->firstname = $firstname;
+            $user->lastname = $lastname;
             $user->password = hash_internal_user_password(generate_password(12));
             $user->id = user_create_user($user);
             $DB->insert_record('local_odoo_sync_map', (object)[
@@ -414,6 +407,12 @@ class sync_from_odoo extends \core\task\scheduled_task {
                 $this->log_failure($DB, $user->id, $odooid, 'parent', 'update_credentials', $e->getMessage());
                 mtrace("Could not push credentials for parent {$odooid}: " . $e->getMessage());
             }
+        } else {
+            $user->firstname = $firstname;
+            $user->lastname = $lastname;
+            $user->email = $email !== '' ? $email : ($user->username . '@odoo.sync');
+            $user->idnumber = $idnumber;
+            user_update_user($user, false, false);
         }
     }
 

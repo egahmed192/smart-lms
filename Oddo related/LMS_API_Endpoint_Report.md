@@ -210,6 +210,11 @@ All documented endpoints respond as expected. Authentication is session-based (c
 
 **Verification:** ✅ Search by `national_id` returns exact match. Search by `name` returns partial matches (e.g. Arabic character "ا") with pagination/cap (100 in sample). All documented student fields are present.
 
+**Get-all / Pagination (verified by integration):**
+- The API does **not** support `offset` or `limit`; a request with those params returns the same first 100 results.
+- Search by **`id`** (e.g. `params: {"id": 271}`) returns exactly one student when the id exists, or `not_found` when it does not. Student ids in production are not necessarily contiguous (e.g. 271, 276, 279, …).
+- To obtain **all** students (or parents), the Moodle sync uses **name-prefix iteration**: it calls search once per Arabic letter (ا, أ, آ, إ, ب, ت, … ي), merges results by id, and thus avoids the 100-per-call cap. Sequential id scan (e.g. 1 to N) is possible but requires knowing the id range and issues one request per id.
+
 ---
 
 ### 2.2 Update Student LMS Credentials — `POST /api/lms/student/update`
