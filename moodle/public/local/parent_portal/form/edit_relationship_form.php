@@ -12,11 +12,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
+namespace local_parent_portal\form;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($GLOBALS['CFG']->libdir . '/formslib.php');
-
-namespace local_parent_portal\form;
 
 class edit_relationship_form extends \moodleform {
 
