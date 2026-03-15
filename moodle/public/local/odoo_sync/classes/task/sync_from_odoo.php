@@ -65,7 +65,7 @@ class sync_from_odoo extends \core\task\scheduled_task {
         $validcourseids = $DB->get_fieldset_sql("SELECT id FROM {course}");
         if (!empty($validcourseids)) {
             list($insql, $params) = $DB->get_in_or_equal($validcourseids, SQL_PARAMS_NAMED, 'cid');
-            $DB->delete_records_select('local_odoo_sync_course_map', "courseid NOT IN ($insql)", $params);
+            $DB->delete_records_select('local_odoo_sync_course_map', "courseid NOT $insql", $params);
         }
 
         // Fetch all students. API returns max 100 per search and has no offset/limit; use name-prefix iteration.
