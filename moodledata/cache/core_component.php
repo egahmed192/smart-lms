@@ -6525,6 +6525,7 @@ $cache = array (
     'theme_classic\\privacy\\provider' => 'C:\\xampp\\htdocs\\moodle\\public/theme/classic/classes/privacy/provider.php',
     'theme_config' => 'C:\\xampp\\htdocs\\moodle\\public/lib/classes/output/theme_config.php',
     'theme_overridden_renderer_factory' => 'C:\\xampp\\htdocs\\moodle\\public/lib/classes/output/renderer_factory/theme_overridden_renderer_factory.php',
+    'theme_school\\output\\core_renderer' => 'C:\\xampp\\htdocs\\moodle\\public/theme/school/classes/output/core_renderer.php',
     'tiny_accessibilitychecker\\plugininfo' => 'C:\\xampp\\htdocs\\moodle/public/lib/editor/tiny/plugins/accessibilitychecker/classes/plugininfo.php',
     'tiny_accessibilitychecker\\privacy\\provider' => 'C:\\xampp\\htdocs\\moodle/public/lib/editor/tiny/plugins/accessibilitychecker/classes/privacy/provider.php',
     'tiny_accessibilitychecker_plugininfo' => 'C:\\xampp\\htdocs\\moodle/public/lib/editor/tiny/plugins/accessibilitychecker/classes/plugininfo.php',
