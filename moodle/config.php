@@ -6,20 +6,20 @@ $CFG = new stdClass();
 
 $CFG->dbtype    = 'mariadb';
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = 'localhost';
+$CFG->dbhost    = '127.0.0.1';
 $CFG->dbname    = 'moodle';
 $CFG->dbuser    = 'root';   // MySQL user
 $CFG->dbpass    = '';       // No password (XAMPP default)
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
-  'dbport' => 3307,         // MySQL on 3306
+  'dbport' => 3306,         // MySQL default port
   'dbsocket' => '',
   'dbcollation' => 'utf8mb4_unicode_ci',
 );
 
-$CFG->wwwroot   = 'http://localhost/moodle';
-$CFG->dataroot  = 'D:\\New folder\\htdocs\\moodledata';
+$CFG->wwwroot   = 'http://localhost:8080/moodle';
+$CFG->dataroot  = 'C:\\xampp\\htdocs\\moodledata';
 $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
