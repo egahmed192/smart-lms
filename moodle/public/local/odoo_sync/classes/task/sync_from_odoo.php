@@ -338,6 +338,9 @@ class sync_from_odoo extends \core\task\scheduled_task {
             $user = $DB->get_record('user', ['id' => $map->userid]);
         }
         if (!$user) {
+            // Create a new Moodle user with a random password. Store the hash in Moodle but
+            // send the plain password to Odoo so it can hold non-hashed LMS credentials.
+            $plainpassword = generate_password(12);
             $user = new \stdClass();
             $user->auth = 'manual';
             $user->confirmed = 1;
@@ -346,7 +349,7 @@ class sync_from_odoo extends \core\task\scheduled_task {
             $user->email = $user->username . '@odoo.sync';
             $user->firstname = $firstname;
             $user->lastname = $lastname;
-            $user->password = hash_internal_user_password(generate_password(12));
+            $user->password = hash_internal_user_password($plainpassword);
             $user->id = user_create_user($user);
             $isnew = true;
             $DB->insert_record('local_odoo_sync_map', (object)[
@@ -364,7 +367,8 @@ class sync_from_odoo extends \core\task\scheduled_task {
                 local_assessments_get_secret_code($user->id);
             }
             try {
-                $client->student_update($odooid, $user->username, $user->password);
+                // Odoo expects plain LMS credentials; pass the non-hashed password.
+                $client->student_update($odooid, $user->username, $plainpassword);
             } catch (\Throwable $e) {
                 $this->log_failure($DB, $user->id, $odooid, 'student', 'update_credentials', $e->getMessage());
                 mtrace("Could not push credentials for student {$odooid}: " . $e->getMessage());
@@ -510,6 +514,9 @@ class sync_from_odoo extends \core\task\scheduled_task {
         $idnumber = trim((string) ($p['identification_id'] ?? $p['national_id'] ?? ''));
         list($firstname, $lastname) = $this->parse_full_name($name, 'Parent', (string) $odooid);
         if (!$user) {
+            // Create a new Moodle user with a random password. Store the hash in Moodle but
+            // send the plain password to Odoo so it can hold non-hashed LMS credentials.
+            $plainpassword = generate_password(12);
             $user = new \stdClass();
             $user->auth = 'manual';
             $user->confirmed = 1;
@@ -519,7 +526,7 @@ class sync_from_odoo extends \core\task\scheduled_task {
             $user->idnumber = $idnumber;
             $user->firstname = $firstname;
             $user->lastname = $lastname;
-            $user->password = hash_internal_user_password(generate_password(12));
+            $user->password = hash_internal_user_password($plainpassword);
             $user->id = user_create_user($user);
             $DB->insert_record('local_odoo_sync_map', (object)[
                 'userid' => $user->id,
@@ -531,7 +538,8 @@ class sync_from_odoo extends \core\task\scheduled_task {
                 role_assign($parentrole->id, $user->id, $sysctx->id);
             }
             try {
-                $client->parent_update($odooid, $user->username, $user->password);
+                // Odoo expects plain LMS credentials; pass the non-hashed password.
+                $client->parent_update($odooid, $user->username, $plainpassword);
             } catch (\Throwable $e) {
                 $this->log_failure($DB, $user->id, $odooid, 'parent', 'update_credentials', $e->getMessage());
                 mtrace("Could not push credentials for parent {$odooid}: " . $e->getMessage());
