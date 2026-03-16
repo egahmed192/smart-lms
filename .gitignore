@@ -4,3 +4,6 @@
 # Moodle data and local cache directories (never commit runtime data)
 /moodledata/
 
+# Local Moodle configuration (contains environment-specific secrets/paths)
+/moodle/config.php
+
