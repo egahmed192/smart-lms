@@ -25,31 +25,115 @@ $PAGE->set_heading(get_string('parent_dashboard', 'local_parent_portal'));
 require_capability('local/parent_portal:view_child_data', context_system::instance());
 
 global $DB;
+
+// Fetch all active children for this parent.
 $studentids = local_parent_portal_get_students_for_parent($USER->id);
 $students = [];
-foreach ($studentids as $sid) {
-    if (!local_odoo_sync_is_license_valid($sid)) {
-        continue;
+if (!empty($studentids)) {
+    list($insql, $params) = $DB->get_in_or_equal($studentids, SQL_PARAMS_NAMED, 'uid');
+    $records = $DB->get_records_select('user', "deleted = 0 AND id $insql", $params);
+    foreach ($records as $u) {
+        // Skip children whose license is not valid.
+        if (!local_odoo_sync_is_license_valid($u->id)) {
+            continue;
+        }
+        $students[$u->id] = $u;
     }
-    $u = $DB->get_record('user', ['id' => $sid, 'deleted' => 0]);
-    if ($u) {
-        $students[] = $u;
+}
+
+// Preload class/grade info from Odoo mapping tables.
+$classinfo = [];
+if (!empty($students)) {
+    $studentids = array_keys($students);
+    list($insql, $params) = $DB->get_in_or_equal($studentids, SQL_PARAMS_NAMED, 'sid');
+    $maps = $DB->get_records_select('local_odoo_sync_map', "odoo_type = 'student' AND userid $insql", $params);
+
+    // Load all referenced years and standards in one go.
+    $yearids = [];
+    $standardids = [];
+    foreach ($maps as $m) {
+        if (!empty($m->year_apply_for_id)) {
+            $yearids[] = (int)$m->year_apply_for_id;
+        }
+        if (!empty($m->standard_id)) {
+            $standardids[] = (int)$m->standard_id;
+        }
+    }
+    $yearnames = [];
+    if (!empty($yearids)) {
+        $yearids = array_unique($yearids);
+        list($insql, $params) = $DB->get_in_or_equal($yearids, SQL_PARAMS_NAMED, 'yid');
+        $years = $DB->get_records_select('local_odoo_sync_year', "odoo_id $insql", $params);
+        foreach ($years as $y) {
+            $yearnames[$y->odoo_id] = $y->display_name;
+        }
+    }
+    $standardnames = [];
+    if (!empty($standardids)) {
+        $standardids = array_unique($standardids);
+        list($insql, $params) = $DB->get_in_or_equal($standardids, SQL_PARAMS_NAMED, 'sid2');
+        $standards = $DB->get_records_select('local_odoo_sync_standard', "odoo_id $insql", $params);
+        foreach ($standards as $st) {
+            $standardnames[$st->odoo_id] = $st->display_name;
+        }
+    }
+
+    foreach ($maps as $m) {
+        $userid = (int)$m->userid;
+        $yearname = '';
+        $standardname = '';
+        if (!empty($m->year_apply_for_id) && isset($yearnames[$m->year_apply_for_id])) {
+            $yearname = $yearnames[$m->year_apply_for_id];
+        }
+        if (!empty($m->standard_id) && isset($standardnames[$m->standard_id])) {
+            $standardname = $standardnames[$m->standard_id];
+        }
+        $classinfo[$userid] = [
+            'year' => $yearname,
+            'standard' => $standardname,
+        ];
     }
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('parent_dashboard', 'local_parent_portal'));
+echo html_writer::tag('p', get_string('parent_dashboard_intro', 'local_parent_portal'), ['class' => 'text-muted']);
 
 if (empty($students)) {
-    echo $OUTPUT->notification(get_string('no_children', 'local_parent_portal'), 'info');
+    echo $OUTPUT->notification(get_string('no_children_friendly', 'local_parent_portal'), 'info');
     echo $OUTPUT->footer();
     exit;
 }
 
-$items = [];
-foreach ($students as $s) {
-    $url = new moodle_url('/local/parent_portal/child.php', ['studentid' => $s->id]);
-    $items[] = html_writer::tag('li', html_writer::link($url, fullname($s)));
+// Render one card per child.
+echo html_writer::start_div('row');
+foreach ($students as $student) {
+    $url = new moodle_url('/local/parent_portal/child.php', ['studentid' => $student->id]);
+    $class = $classinfo[$student->id] ?? ['year' => '', 'standard' => ''];
+    $classname = trim($class['year'] . ' ' . $class['standard']);
+
+    $body = html_writer::tag('h5', fullname($student), ['class' => 'card-title']);
+    if ($classname !== '') {
+        $body .= html_writer::tag('p',
+            get_string('child_class_label', 'local_parent_portal', $classname),
+            ['class' => 'card-text text-muted']
+        );
+    }
+    $body .= html_writer::tag('p',
+        get_string('license_status_active', 'local_parent_portal'),
+        ['class' => 'badge bg-success text-wrap']
+    );
+    $body .= html_writer::tag('p',
+        html_writer::link($url, get_string('view_child_details', 'local_parent_portal'),
+            ['class' => 'btn btn-primary']),
+        []
+    );
+
+    $card = html_writer::start_div('card mb-3');
+    $card .= html_writer::tag('div', $body, ['class' => 'card-body']);
+    $card .= html_writer::end_div();
+
+    echo html_writer::tag('div', $card, ['class' => 'col-md-4']);
 }
-echo html_writer::tag('ul', implode('', $items));
+echo html_writer::end_div();
 echo $OUTPUT->footer();

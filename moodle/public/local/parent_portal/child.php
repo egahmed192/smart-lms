@@ -42,27 +42,71 @@ if (!$student) {
     throw new moodle_exception('invaliduserid');
 }
 
+// Load class/grade information from Odoo sync mapping.
+$classname = '';
+$map = $DB->get_record('local_odoo_sync_map', ['userid' => $studentid, 'odoo_type' => 'student']);
+if ($map) {
+    $yearname = '';
+    $standardname = '';
+    if (!empty($map->year_apply_for_id)) {
+        $yearrec = $DB->get_record('local_odoo_sync_year', ['odoo_id' => $map->year_apply_for_id]);
+        if ($yearrec) {
+            $yearname = $yearrec->display_name;
+        }
+    }
+    if (!empty($map->standard_id)) {
+        $standardrec = $DB->get_record('local_odoo_sync_standard', ['odoo_id' => $map->standard_id]);
+        if ($standardrec) {
+            $standardname = $standardrec->display_name;
+        }
+    }
+    $classname = trim($yearname . ' ' . $standardname);
+}
+
+// Determine license status text (here we only reach this point if license is valid).
+$licensetext = get_string('license_status_active', 'local_parent_portal');
+
 $PAGE->set_heading(fullname($student));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(fullname($student));
+
+// Child header with class and license info.
+echo html_writer::start_div('mb-4');
+echo html_writer::tag('h2', fullname($student));
+if ($classname !== '') {
+    echo html_writer::tag('p',
+        get_string('child_class_label', 'local_parent_portal', $classname),
+        ['class' => 'text-muted']
+    );
+}
+echo html_writer::tag('span', $licensetext, ['class' => 'badge bg-success']);
+echo html_writer::end_div();
 
 // Courses (enrolled).
 $courses = enrol_get_all_users_courses($studentid, true);
+echo $OUTPUT->heading(get_string('child_courses', 'local_parent_portal'), 3);
 if (!empty($courses)) {
-    echo $OUTPUT->heading(get_string('child_courses', 'local_parent_portal'), 3);
-    $list = [];
+    $table = new html_table();
+    $table->head = [get_string('course'), get_string('category')];
+    $table->data = [];
     foreach ($courses as $c) {
-        $list[] = $c->fullname;
+        $catname = '';
+        if (!empty($c->category)) {
+            $cat = $DB->get_record('course_categories', ['id' => $c->category], 'name');
+            $catname = $cat ? $cat->name : '';
+        }
+        $table->data[] = [$c->fullname, $catname];
     }
-    echo html_writer::tag('p', implode(', ', $list));
+    echo html_writer::table($table);
+} else {
+    echo html_writer::tag('p', get_string('child_no_courses', 'local_parent_portal'));
 }
 
 // Grades: if local_assessments exists, show course total; else core gradebook link.
+echo $OUTPUT->heading(get_string('child_grades', 'local_parent_portal'), 3);
 if (function_exists('local_assessments_get_course_totals')) {
     $totals = local_assessments_get_course_totals($studentid);
     if (!empty($totals)) {
-        echo $OUTPUT->heading(get_string('child_grades', 'local_parent_portal'), 3);
         $table = new html_table();
         $table->head = [get_string('course'), get_string('total_score', 'local_assessments')];
         $table->data = [];
@@ -71,10 +115,12 @@ if (function_exists('local_assessments_get_course_totals')) {
             $table->data[] = [$c ? $c->fullname : $courseid, round($total, 2)];
         }
         echo html_writer::table($table);
+    } else {
+        echo html_writer::tag('p', get_string('child_no_grades', 'local_parent_portal'));
     }
 } else {
     $gradeurl = new moodle_url('/grade/report/user/index.php', ['userid' => $studentid]);
-    echo $OUTPUT->heading(get_string('child_grades', 'local_parent_portal'), 3);
+    echo html_writer::tag('p', get_string('child_grades_link_intro', 'local_parent_portal'));
     echo html_writer::link($gradeurl, get_string('view_grades', 'local_parent_portal'));
 }
 
