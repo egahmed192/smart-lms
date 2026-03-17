@@ -56,9 +56,6 @@ class local_message_audit_log_filter_form extends moodleform {
         $mform->addElement('select', 'bulk_send', get_string('bulk_message', 'local_message_audit'), $tri);
         $mform->setType('bulk_send', PARAM_INT);
 
-        $mform->addElement('text', 'reason', 'Reason', ['size' => 40]);
-        $mform->setType('reason', PARAM_TEXT);
-
         $mform->addElement('text', 'message', get_string('message', 'local_message_audit'), ['size' => 40]);
         $mform->setType('message', PARAM_TEXT);
 

@@ -83,7 +83,6 @@ $filters = (object)[
     'courseid' => optional_param('courseid', 0, PARAM_INT),
     'flagged' => optional_param('flagged', -1, PARAM_INT),
     'bulk_send' => optional_param('bulk_send', -1, PARAM_INT),
-    'reason' => optional_param('reason', '', PARAM_TEXT),
     'message' => optional_param('message', '', PARAM_TEXT),
     'usedatefrom' => optional_param('usedatefrom', 0, PARAM_BOOL),
     'usedateto' => optional_param('usedateto', 0, PARAM_BOOL),
@@ -130,10 +129,6 @@ if ($filters->flagged >= 0) {
 if ($filters->bulk_send >= 0) {
     $sql .= " AND l.bulk_send = :bulksend";
     $params['bulksend'] = $filters->bulk_send;
-}
-if (trim($filters->reason) !== '') {
-    $sql .= " AND " . $DB->sql_like('l.reason', ':reason', false, false);
-    $params['reason'] = '%' . $DB->sql_like_escape(trim($filters->reason)) . '%';
 }
 if (trim($filters->message) !== '') {
     $sql .= " AND " . $DB->sql_like('l.message_text', ':message', false, false);
@@ -187,7 +182,6 @@ $baseparams = [
     'courseid' => $filters->courseid,
     'flagged' => $filters->flagged,
     'bulk_send' => $filters->bulk_send,
-    'reason' => $filters->reason,
     'message' => $filters->message,
     'usedatefrom' => $filters->usedatefrom,
     'usedateto' => $filters->usedateto,
@@ -238,7 +232,6 @@ if (!empty($table->data)) {
     'courseid' => $filters->courseid,
         'flagged' => $filters->flagged,
         'bulk_send' => $filters->bulk_send,
-        'reason' => $filters->reason,
         'message' => $filters->message,
         'usedatefrom' => $filters->usedatefrom,
         'usedateto' => $filters->usedateto,

@@ -31,6 +31,10 @@ class observer {
         $senderid = (int) $event->userid;
         $receiverid = (int) $event->relateduserid;
         $courseid = isset($event->other['courseid']) ? (int) $event->other['courseid'] : null;
+        // Messaging API uses the site course (id=1) for direct messages; treat that as "no course" in our log.
+        if ($courseid === 1) {
+            $courseid = null;
+        }
         $messageid = (int) $event->objectid;
 
         $messageText = '';

@@ -78,19 +78,36 @@ foreach ($batch as $recid) {
             );
             $convid = (int)$conv->id;
         }
-        \core_message\api::send_message_to_conversation($USER->id, $convid, $message, FORMAT_PLAIN);
-        $DB->insert_record('local_message_audit_log', (object)[
-            'timecreated' => time(),
-            'senderid' => $USER->id,
-            'receiverid' => $recid,
-            'courseid' => $courseid ?: null,
-            'contextid' => null,
-            'message_text' => $message,
-            'metadata_json' => json_encode(['bulk' => true, 'target' => $target, 'classkey' => $classkey, 'cohortid' => $cohortid]),
-            'flagged' => 0,
-            'reason' => null,
-            'bulk_send' => 1,
-        ]);
+        $sentmsg = \core_message\api::send_message_to_conversation($USER->id, $convid, $message, FORMAT_PLAIN);
+
+        // The message_sent observer already logs this message with bulk_send=0.
+        // Upgrade that existing log row to bulk_send=1 to avoid duplicates.
+        $msgid = isset($sentmsg->id) ? (int)$sentmsg->id : 0;
+        $updated = false;
+        if ($msgid > 0) {
+            $like = '%"messageid":' . $msgid . '%';
+            $select = "senderid = :sid AND receiverid = :rid AND " . $DB->sql_like('metadata_json', ':mj', false, false);
+            $selparams = ['sid' => $USER->id, 'rid' => $recid, 'mj' => $like];
+            $updated = $DB->set_field_select('local_message_audit_log', 'bulk_send', 1, $select, $selparams);
+            if ($courseid) {
+                $DB->set_field_select('local_message_audit_log', 'courseid', $courseid, $select, $selparams);
+            }
+        }
+        if (!$updated) {
+            // Fallback: if no observer row exists for any reason, insert a bulk log row.
+            $DB->insert_record('local_message_audit_log', (object)[
+                'timecreated' => time(),
+                'senderid' => $USER->id,
+                'receiverid' => $recid,
+                'courseid' => $courseid ?: null,
+                'contextid' => null,
+                'message_text' => $message,
+                'metadata_json' => json_encode(['bulk' => true, 'target' => $target, 'classkey' => $classkey, 'cohortid' => $cohortid]),
+                'flagged' => 0,
+                'reason' => null,
+                'bulk_send' => 1,
+            ]);
+        }
         $sent++;
     } catch (\Throwable $e) {
         $failed++;
