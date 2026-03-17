@@ -36,52 +36,15 @@ $recipients = array_values(array_unique(array_filter(array_map('intval', $recipi
 $count = count($recipients);
 
 if ($confirm && $message !== '' && confirm_sesskey() && $count > 0) {
-    require_once($CFG->dirroot . '/message/lib.php');
-    $sent = 0;
-    foreach ($recipients as $recid) {
-        if ($recid == $USER->id) {
-            continue;
-        }
-        try {
-            $conv = \core_message\api::get_conversation_between_users([$USER->id, $recid]);
-            if (!$conv) {
-                $conv = \core_message\api::create_conversation(
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-                    [$USER->id, $recid]
-                );
-            }
-            \core_message\api::send_message_to_conversation($USER->id, $conv->id, $message, FORMAT_PLAIN);
-            $DB->insert_record('local_message_audit_log', (object)[
-                'timecreated' => time(),
-                'senderid' => $USER->id,
-                'receiverid' => $recid,
-                'courseid' => $courseid ?: null,
-                'contextid' => null,
-                'message_text' => $message,
-                'metadata_json' => json_encode(['bulk' => true, 'target' => $target, 'classkey' => $classkey, 'cohortid' => $cohortid]),
-                'flagged' => 0,
-                'reason' => null,
-                'bulk_send' => 1,
-            ]);
-            $sent++;
-        } catch (\Throwable $e) {
-            // Skip failed recipient.
-        }
-    }
-    if ($sent > 0) {
-        $msg = new \core\message\message();
-        $msg->component = 'local_message_audit';
-        $msg->name = 'bulk_send_confirmation';
-        $msg->userfrom = \core_user::get_user(\core_user::NOREPLY_USER);
-        $msg->userto = $USER;
-        $msg->subject = get_string('bulk_send_notification', 'local_message_audit', $sent);
-        $msg->fullmessage = get_string('bulk_send_notification', 'local_message_audit', $sent);
-        $msg->fullmessageformat = FORMAT_PLAIN;
-        $msg->smallmessage = get_string('bulk_send_notification', 'local_message_audit', $sent);
-        $msg->notification = 1;
-        message_send($msg);
-    }
-    redirect(new moodle_url('/local/message_audit/bulk.php'), get_string('bulk_sent', 'local_message_audit', $sent), null, \core\output\notification::NOTIFY_SUCCESS);
+    $_SESSION['local_message_audit_bulk_recipients'] = $recipients;
+    $_SESSION['local_message_audit_bulk_message'] = $message;
+    $_SESSION['local_message_audit_bulk_courseid'] = $courseid;
+    $_SESSION['local_message_audit_bulk_target'] = $target;
+    $_SESSION['local_message_audit_bulk_classkey'] = $classkey;
+    $_SESSION['local_message_audit_bulk_cohortid'] = $cohortid;
+    $_SESSION['local_message_audit_bulk_offset'] = 0;
+    $_SESSION['local_message_audit_bulk_total_sent'] = 0;
+    redirect(new moodle_url('/local/message_audit/bulk_progress.php'));
 }
 
 $classes = local_message_audit_bulk_get_classes($DB);

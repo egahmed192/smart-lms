@@ -26,7 +26,8 @@ class observer {
      * @param \core\event\message_sent $event
      */
     public static function message_sent(\core\event\message_sent $event): void {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/local/message_audit/lib.php');
         $senderid = (int) $event->userid;
         $receiverid = (int) $event->relateduserid;
         $courseid = isset($event->other['courseid']) ? (int) $event->other['courseid'] : null;
@@ -44,7 +45,7 @@ class observer {
 
         // Student–parent restriction: only teachers/supervisors (with capability) may send student–parent messages.
         $studentparentviolation = false;
-        if (local_message_audit_is_student_parent_exchange($senderid, $receiverid)) {
+        if (\local_message_audit_is_student_parent_exchange($senderid, $receiverid)) {
             $context = \context_system::instance();
             $sender = $DB->get_record('user', ['id' => $senderid]);
             if ($sender && !has_capability('local/message_audit:message_student_parent', $context, $sender)) {
@@ -84,7 +85,7 @@ class observer {
             $DB->delete_records('messages', ['id' => $messageid]);
         }
 
-        if ($flagged && $matchedaction === 'notify_admin') {
+        if ($flagged && ($matchedaction === 'notify_admin' || $matchedaction === 'flag_and_notify')) {
             self::notify_view_logs_users($senderid, $receiverid, $reason, $messageText);
         }
     }

@@ -25,6 +25,9 @@ $string['no_keywords'] = 'No keyword rules.';
 $string['pattern'] = 'Pattern';
 $string['severity'] = 'Severity';
 $string['action'] = 'Action';
+$string['action_flag'] = 'Flag';
+$string['action_notify_admin'] = 'Notify admin';
+$string['action_flag_and_notify'] = 'Flag and notify';
 $string['bulk_sent'] = 'Bulk message sent to {$a} recipients.';
 $string['student_parent_violation'] = 'Student–parent messaging not allowed (sender lacks capability).';
 $string['target'] = 'Target';
@@ -56,3 +59,9 @@ Preview: {$a->preview}
 
 View the message log for details.';
 $string['bulk_send_notification'] = 'Bulk message sent to {$a} recipients.';
+$string['bulk_sending'] = 'Sending bulk messages';
+$string['bulk_progress_intro'] = 'Sending to {$a} recipients. Please wait…';
+$string['bulk_progress_status'] = 'Sent {$a->sent} of {$a->total}';
+$string['bulk_progress_nodata'] = 'No bulk send in progress.';
+$string['bulk_progress_error'] = 'An error occurred while sending.';
+$string['back_to_bulk'] = 'Back to bulk message';

@@ -14,19 +14,20 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/message_audit/form/keyword_form.php');
 
 admin_externalpage_setup('local_message_audit');
 require_capability('local/message_audit:view_logs', context_system::instance());
 
 $id = optional_param('id', 0, PARAM_INT);
-$PAGE->set_url(new moodle_url('/local/message_audit/keywords_edit.php', ['id' => $id]));
+$PAGE->set_url(new moodle_url('/local/message_audit/keywords_edit.php', array('id' => $id)));
 $PAGE->set_title($id ? get_string('edit') : get_string('add_keyword', 'local_message_audit'));
 $PAGE->set_heading($id ? get_string('edit') : get_string('add_keyword', 'local_message_audit'));
 
 global $DB;
-$keyword = $id ? $DB->get_record('local_message_audit_keywords', ['id' => $id]) : null;
+$keyword = $id ? $DB->get_record('local_message_audit_keywords', array('id' => $id)) : null;
 
-$mform = new \local_message_audit\form\keyword_form(null, ['keyword' => $keyword]);
+$mform = new local_message_audit_keyword_form(null, array('keyword' => $keyword));
 if ($keyword) {
     $mform->set_data($keyword);
 }

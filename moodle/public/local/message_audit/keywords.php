@@ -40,13 +40,19 @@ echo html_writer::link(new moodle_url('/local/message_audit/keywords_edit.php'),
 $table = new html_table();
 $table->head = ['Pattern', 'Severity', 'Action', 'Actions'];
 $table->data = [];
+$actionstrings = [
+    'flag' => get_string('action_flag', 'local_message_audit'),
+    'notify_admin' => get_string('action_notify_admin', 'local_message_audit'),
+    'flag_and_notify' => get_string('action_flag_and_notify', 'local_message_audit'),
+];
 foreach ($keywords as $kw) {
     $delurl = new moodle_url('/local/message_audit/keywords.php', ['delete' => $kw->id, 'sesskey' => sesskey()]);
     $editurl = new moodle_url('/local/message_audit/keywords_edit.php', ['id' => $kw->id]);
+    $actionlabel = isset($actionstrings[$kw->action]) ? $actionstrings[$kw->action] : s($kw->action);
     $table->data[] = [
         s($kw->pattern),
         s($kw->severity),
-        s($kw->action),
+        $actionlabel,
         html_writer::link($editurl, get_string('edit')) . ' | ' . html_writer::link($delurl, get_string('delete')),
     ];
 }
