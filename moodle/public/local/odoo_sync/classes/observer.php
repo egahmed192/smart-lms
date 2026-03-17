@@ -45,6 +45,8 @@ class observer {
             return;
         }
         local_odoo_sync_license_audit_log($userid, 'access_blocked');
+        // Immediately terminate the session so the user is not actually logged in.
+        require_logout();
         redirect(new \moodle_url('/local/odoo_sync/blocked.php'));
     }
 

@@ -20,17 +20,14 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('access_blocked', 'local_odoo_sync'));
 $PAGE->set_heading(get_string('access_blocked', 'local_odoo_sync'));
 
-// If not logged in, send to login.
-if (!isloggedin() || isguestuser()) {
-    redirect(get_login_url());
-}
-
-// If license is actually valid (e.g. just updated), allow through.
-if (local_odoo_sync_is_license_valid($USER->id)) {
-    redirect(new moodle_url('/'));
+// If already logged in and license is valid (e.g. just updated), allow through.
+if (isloggedin() && !isguestuser()) {
+    if (local_odoo_sync_is_license_valid($USER->id)) {
+        redirect(new moodle_url('/'));
+    }
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->notification(get_string('access_blocked_message', 'local_odoo_sync'), 'error');
-echo html_writer::link(new moodle_url('/login/logout.php', ['sesskey' => sesskey()]), get_string('logout'), ['class' => 'btn btn-primary']);
+echo html_writer::link(get_login_url(), get_string('login'), ['class' => 'btn btn-primary']);
 echo $OUTPUT->footer();
