@@ -30,12 +30,30 @@ if ($delete && confirm_sesskey()) {
     redirect(new moodle_url('/local/message_audit/keywords.php'), get_string('deleted', 'core'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
+$togglephones = optional_param('togglephones', -1, PARAM_INT);
+if ($togglephones !== -1 && confirm_sesskey()) {
+    set_config('flag_egyptian_phones', $togglephones ? 1 : 0, 'local_message_audit');
+    redirect(new moodle_url('/local/message_audit/keywords.php'), get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+}
+
 $keywords = $DB->get_records('local_message_audit_keywords', null, 'id ASC');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('keyword_rules', 'local_message_audit'));
 echo html_writer::link(new moodle_url('/local/message_audit/index.php'), get_string('message_log', 'local_message_audit')) . ' | ';
 echo html_writer::link(new moodle_url('/local/message_audit/keywords_edit.php'), get_string('add_keyword', 'local_message_audit')) . '<br><br>';
+
+$enabled = (int)get_config('local_message_audit', 'flag_egyptian_phones');
+$toggleurl = new moodle_url('/local/message_audit/keywords.php', ['togglephones' => $enabled ? 0 : 1, 'sesskey' => sesskey()]);
+$label = get_string('flag_egyptian_phones', 'local_message_audit');
+$help = get_string('flag_egyptian_phones_help', 'local_message_audit');
+echo html_writer::div(
+    html_writer::tag('strong', $label) . ': ' .
+    ($enabled ? get_string('yes') : get_string('no')) . ' ' .
+    html_writer::link($toggleurl, $enabled ? get_string('disable') : get_string('enable'), ['class' => 'btn btn-secondary btn-sm ms-2']) .
+    html_writer::tag('div', s($help), ['class' => 'text-muted small mt-1']),
+    'mb-4'
+);
 
 $table = new html_table();
 $table->head = ['Pattern', 'Severity', 'Action', 'Actions'];

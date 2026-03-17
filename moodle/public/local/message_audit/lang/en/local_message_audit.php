@@ -66,6 +66,11 @@ $string['bulk_progress_nodata'] = 'No bulk send in progress.';
 $string['bulk_progress_error'] = 'An error occurred while sending.';
 $string['back_to_bulk'] = 'Back to bulk message';
 
+// Phone number flagging.
+$string['flag_egyptian_phones'] = 'Flag Egyptian phone numbers';
+$string['flag_egyptian_phones_help'] = 'If enabled, messages containing Egyptian phone numbers (e.g. +20..., 0020..., or 01xxxxxxxxx) will be automatically flagged.';
+$string['flag_reason_egyptian_phone'] = 'Egyptian phone number detected';
+
 // Log filters.
 $string['filters_heading'] = 'Filters';
 $string['filter_apply'] = 'Apply filters';

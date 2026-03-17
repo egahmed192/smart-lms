@@ -68,6 +68,16 @@ class observer {
                     break;
                 }
             }
+            // Optional: flag Egyptian phone numbers.
+            if (!$flagged && (int)get_config('local_message_audit', 'flag_egyptian_phones')) {
+                // Match Egyptian numbers like: 01xxxxxxxxx, +201xxxxxxxxx, 00201xxxxxxxxx (allow spaces/dashes).
+                $re = '/(?:\\+?20|0020)?\\s*0?1\\s*[0-9\\s-]{9,12}/u';
+                if (preg_match($re, $messageText)) {
+                    $flagged = 1;
+                    $reason = get_string('flag_reason_egyptian_phone', 'local_message_audit');
+                    $matchedaction = 'flag';
+                }
+            }
         } else {
             $flagged = 1;
         }

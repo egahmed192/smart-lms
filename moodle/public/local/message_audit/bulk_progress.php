@@ -16,11 +16,11 @@ admin_externalpage_setup('local_message_audit_bulk');
 require_capability('local/message_audit:send_bulk_message', context_system::instance());
 
 $PAGE->set_url(new moodle_url('/local/message_audit/bulk_progress.php'));
-$PAGE->set_title('Sending bulk messages');
-$PAGE->set_heading('Sending bulk messages');
+$PAGE->set_title(get_string('bulk_sending', 'local_message_audit'));
+$PAGE->set_heading(get_string('bulk_sending', 'local_message_audit'));
 
 if (!isset($_SESSION['local_message_audit_bulk_recipients']) || !is_array($_SESSION['local_message_audit_bulk_recipients'])) {
-    redirect(new moodle_url('/local/message_audit/bulk.php'), 'No bulk send in progress.', null, \core\output\notification::NOTIFY_WARNING);
+    redirect(new moodle_url('/local/message_audit/bulk.php'), get_string('bulk_progress_nodata', 'local_message_audit'), null, \core\output\notification::NOTIFY_WARNING);
 }
 
 $total = count($_SESSION['local_message_audit_bulk_recipients']);
@@ -30,18 +30,29 @@ $backurl = new moodle_url('/local/message_audit/bulk.php');
 $sesskey = sesskey();
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Sending bulk messages');
-echo html_writer::tag('p', 'Sending to ' . $total . ' recipients. Please wait…', ['class' => 'mb-3']);
+echo $OUTPUT->heading(get_string('bulk_sending', 'local_message_audit'));
+echo html_writer::tag('p', get_string('bulk_progress_intro', 'local_message_audit', $total), ['class' => 'mb-3']);
 echo html_writer::div(html_writer::div('', 'progress-bar progress-bar-striped progress-bar-animated', ['role' => 'progressbar', 'style' => 'width: 0%']), 'progress mb-3', ['id' => 'bulk-progress-bar', 'style' => 'height: 24px;', 'aria-valuenow' => '0', 'aria-valuemin' => '0', 'aria-valuemax' => (string)$total]);
-echo html_writer::tag('p', 'Sent 0 of ' . $total, ['id' => 'bulk-progress-status', 'class' => 'mb-3']);
+echo html_writer::tag('p', get_string('bulk_progress_status', 'local_message_audit', (object)['sent' => 0, 'total' => $total]), ['id' => 'bulk-progress-status', 'class' => 'mb-3']);
 echo html_writer::div('', '', ['id' => 'bulk-progress-done']);
 
 $PAGE->requires->js_amd_inline("
-require(['jquery'], function($) {
+require(['jquery', 'core/str'], function($, Str) {
     var total = " . (int)$total . ";
     var chunkUrl = " . json_encode($chunkurlabsolute) . ";
     var backUrl = " . json_encode($backurl->out(false)) . ";
     var sesskey = " . json_encode($sesskey) . ";
+    var backLabel = " . json_encode(get_string('back_to_bulk', 'local_message_audit')) . ";
+    var invalidResp = " . json_encode(get_string('bulk_progress_error', 'local_message_audit')) . ";
+
+    function setStatus(sent, tot, failed) {
+        return Str.get_string('bulk_progress_status', 'local_message_audit', {sent: sent, total: tot}).then(function(s) {
+            if (failed > 0) {
+                s += ' (failed ' + failed + ')';
+            }
+            $('#bulk-progress-status').text(s);
+        });
+    }
 
     function runChunk() {
         $.ajax({
@@ -51,15 +62,15 @@ require(['jquery'], function($) {
             dataType: 'json'
         }).done(function(data) {
             if (typeof data !== 'object' || data === null) {
-                $('#bulk-progress-done').html('<div class=\"alert alert-danger\">Invalid response.</div><a href=\"' + backUrl + '\" class=\"btn btn-secondary\">Back to bulk message</a>');
+                $('#bulk-progress-done').html('<div class=\"alert alert-danger\">' + invalidResp + '</div><a href=\"' + backUrl + '\" class=\"btn btn-secondary\">' + backLabel + '</a>');
                 return;
             }
             if (data.error === 'auth') {
-                $('#bulk-progress-done').html('<div class=\"alert alert-warning\">Session expired or invalid. Please <a href=\"' + backUrl + '\">go back</a> and start the bulk send again.</div>');
+                $('#bulk-progress-done').html('<div class=\"alert alert-warning\">' + invalidResp + '</div><a href=\"' + backUrl + '\" class=\"btn btn-secondary\">' + backLabel + '</a>');
                 return;
             }
             if (data.error === 'nodata') {
-                $('#bulk-progress-done').html('<div class=\"alert alert-warning\">No recipients in session. Please <a href=\"' + backUrl + '\">go back</a> and start the bulk send again.</div>');
+                $('#bulk-progress-done').html('<div class=\"alert alert-warning\">' + invalidResp + '</div><a href=\"' + backUrl + '\" class=\"btn btn-secondary\">' + backLabel + '</a>');
                 return;
             }
             var sent = parseInt(data.sent, 10) || 0;
@@ -68,16 +79,13 @@ require(['jquery'], function($) {
             var pct = tot > 0 ? Math.min(100, Math.round((sent / tot) * 100)) : 0;
             $('#bulk-progress-bar').attr('aria-valuenow', sent);
             $('#bulk-progress-bar .progress-bar').css('width', pct + '%');
-            var statusText = 'Sent ' + sent + ' of ' + tot;
-            if (failed > 0) {
-                statusText += ' (failed ' + failed + ')';
-            }
-            $('#bulk-progress-status').text(statusText);
+            setStatus(sent, tot, failed);
 
             if (data.done) {
                 $('#bulk-progress-bar .progress-bar').css('width', '100%').removeClass('progress-bar-animated');
-                var msg = 'Bulk message sent to ' + sent + ' recipients.';
-                $('#bulk-progress-done').html('<div class=\"alert alert-success\">' + msg + '</div><a href=\"' + backUrl + '\" class=\"btn btn-primary\">Back to bulk message</a>');
+                Str.get_string('bulk_sent', 'local_message_audit', sent).then(function(msg) {
+                    $('#bulk-progress-done').html('<div class=\"alert alert-success\">' + msg + '</div><a href=\"' + backUrl + '\" class=\"btn btn-primary\">' + backLabel + '</a>');
+                });
                 return;
             }
             setTimeout(runChunk, 150);
@@ -86,7 +94,7 @@ require(['jquery'], function($) {
             if (xhr.responseText && xhr.responseText.length < 200) {
                 errMsg = errMsg + ' (' + xhr.responseText.substring(0, 100) + ')';
             }
-            $('#bulk-progress-done').html('<div class=\"alert alert-danger\">' + errMsg + '</div><a href=\"' + backUrl + '\" class=\"btn btn-secondary\">Back to bulk message</a>');
+            $('#bulk-progress-done').html('<div class=\"alert alert-danger\">' + errMsg + '</div><a href=\"' + backUrl + '\" class=\"btn btn-secondary\">' + backLabel + '</a>');
         });
     }
     runChunk();
