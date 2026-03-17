@@ -79,33 +79,36 @@ function local_message_audit_bulk_get_recipients($DB, string $target, int $cours
         if ($yearid <= 0 || $standardid <= 0) {
             return [];
         }
+        // Students in this class: from Odoo sync map (so it works even when no course is mapped).
+        $studentuserids = $DB->get_fieldset_sql(
+            "SELECT userid FROM {local_odoo_sync_map}
+              WHERE year_apply_for_id = ? AND standard_id = ? AND odoo_type = 'student'",
+            [$yearid, $standardid]
+        );
+        $studentuserids = $studentuserids ? array_values($studentuserids) : [];
+
         $courseids = $DB->get_fieldset_sql(
             "SELECT courseid FROM {local_odoo_sync_course_map} WHERE year_apply_for_id = ? AND standard_id = ?",
             [$yearid, $standardid]
         );
-        if (empty($courseids)) {
-            return [];
+        $ctxids = [];
+        if (!empty($courseids)) {
+            list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+            $ctxids = $DB->get_fieldset_sql("SELECT id FROM {context} WHERE contextlevel = 50 AND instanceid " . $insql, $params);
+            $ctxids = $ctxids ? array_values($ctxids) : [];
         }
-        list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $ctxids = $DB->get_fieldset_sql("SELECT id FROM {context} WHERE contextlevel = 50 AND instanceid " . $insql, $params);
-        if (empty($ctxids)) {
-            return [];
-        }
-        list($ctxin, $params2) = $DB->get_in_or_equal($ctxids, SQL_PARAMS_NAMED);
+
         if ($target === 'class_students') {
-            $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
-            if (!$studentrole) {
-                return [];
-            }
-            $params2['roleid'] = $studentrole;
-            return $DB->get_fieldset_sql("SELECT DISTINCT userid FROM {role_assignments} WHERE contextid " . $ctxin . " AND roleid = :roleid", $params2);
+            return $studentuserids;
         }
         if ($target === 'class_teachers') {
+            if (empty($ctxids)) {
+                return [];
+            }
             $teacherids = $DB->get_fieldset_sql("SELECT id FROM {role} WHERE shortname IN ('teacher', 'editingteacher')");
             if (empty($teacherids)) {
                 return [];
             }
-            // IMPORTANT: use positional params to avoid named-param collisions when merging arrays.
             list($ctxin_qm, $ctxparams) = $DB->get_in_or_equal($ctxids, SQL_PARAMS_QM);
             list($rin_qm, $rparams) = $DB->get_in_or_equal($teacherids, SQL_PARAMS_QM);
             return $DB->get_fieldset_sql(
@@ -115,7 +118,14 @@ function local_message_audit_bulk_get_recipients($DB, string $target, int $cours
                 array_merge($ctxparams, $rparams)
             );
         }
-        return $DB->get_fieldset_sql("SELECT DISTINCT ra.userid FROM {role_assignments} ra WHERE ra.contextid " . $ctxin, $params2);
+        // class_all: students (from sync map) + all users with role in course context (teachers etc.).
+        $all = $studentuserids;
+        if (!empty($ctxids)) {
+            list($ctxin, $params2) = $DB->get_in_or_equal($ctxids, SQL_PARAMS_NAMED);
+            $courseuserids = $DB->get_fieldset_sql("SELECT DISTINCT userid FROM {role_assignments} WHERE contextid " . $ctxin, $params2);
+            $all = array_values(array_unique(array_merge($all, $courseuserids ?: [])));
+        }
+        return $all;
     }
 
     if ($target === 'cohort') {
@@ -162,17 +172,35 @@ function local_message_audit_bulk_get_recipients($DB, string $target, int $cours
 }
 
 /**
- * Get list of classes (year_apply_for_id-standard_id => label) from course map.
+ * Get list of all classes (year_apply_for_id-standard_id => label).
+ * Includes classes from (1) course map and (2) students in sync map, so every class that exists is shown.
+ * Uses Odoo year/standard display_name when available (e.g. "Grade 5 – Section A") instead of raw IDs.
  *
  * @param object $DB
  * @return array
  */
 function local_message_audit_bulk_get_classes($DB): array {
-    $rows = $DB->get_records_sql("SELECT DISTINCT year_apply_for_id, standard_id FROM {local_odoo_sync_course_map} ORDER BY year_apply_for_id, standard_id");
+    // All classes: from course map OR from students in sync map (so we show every class that has students or a mapped course).
+    $sql = "SELECT DISTINCT year_apply_for_id, standard_id
+              FROM (
+                SELECT year_apply_for_id, standard_id FROM {local_odoo_sync_course_map}
+                UNION
+                SELECT year_apply_for_id, standard_id FROM {local_odoo_sync_map}
+                 WHERE odoo_type = 'student' AND year_apply_for_id IS NOT NULL AND year_apply_for_id > 0
+                   AND standard_id IS NOT NULL AND standard_id > 0
+              ) u
+             ORDER BY year_apply_for_id, standard_id";
+    $rows = $DB->get_records_sql($sql);
+    $years = $DB->get_records('local_odoo_sync_year', null, '', 'odoo_id, display_name');
+    $standards = $DB->get_records('local_odoo_sync_standard', null, '', 'odoo_id, display_name');
     $out = [];
     foreach ($rows as $r) {
-        $key = (int)$r->year_apply_for_id . '-' . (int)$r->standard_id;
-        $out[$key] = get_string('class_label', 'local_message_audit', (object)['year' => $r->year_apply_for_id, 'standard' => $r->standard_id]);
+        $yid = (int)$r->year_apply_for_id;
+        $sid = (int)$r->standard_id;
+        $key = $yid . '-' . $sid;
+        $yearname = isset($years[$yid]) && !empty($years[$yid]->display_name) ? $years[$yid]->display_name : (string)$yid;
+        $standardname = isset($standards[$sid]) && !empty($standards[$sid]->display_name) ? $standards[$sid]->display_name : (string)$sid;
+        $out[$key] = $yearname . ' – ' . $standardname;
     }
     return $out;
 }

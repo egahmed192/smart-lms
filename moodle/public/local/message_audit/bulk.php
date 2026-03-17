@@ -49,7 +49,14 @@ if ($confirm && $message !== '' && confirm_sesskey() && $count > 0) {
 }
 
 $classes = local_message_audit_bulk_get_classes($DB);
-$cohorts = local_message_audit_bulk_get_cohorts($DB);
+// All non-site courses for filtering (id => fullname).
+$courses = $DB->get_records_sql_menu(
+    "SELECT id, fullname
+       FROM {course}
+      WHERE id <> ?
+   ORDER BY fullname ASC",
+    [SITEID]
+);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('bulk_message', 'local_message_audit'));
@@ -65,7 +72,6 @@ $targets = [
     'class_students' => get_string('target_class_students', 'local_message_audit'),
     'class_teachers' => get_string('target_class_teachers', 'local_message_audit'),
     'class_all' => get_string('target_class_all', 'local_message_audit'),
-    'cohort' => get_string('target_cohort', 'local_message_audit'),
     'parents_of_class' => get_string('target_parents_of_class', 'local_message_audit'),
 ];
 foreach ($targets as $t => $label) {
@@ -74,21 +80,19 @@ foreach ($targets as $t => $label) {
 echo '</select></div>';
 
 echo '<div class="mb-2" id="bulk-course-row"><label class="me-2">' . get_string('course') . ' (optional)</label>';
-echo '<input type="number" name="courseid" id="bulk-courseid" class="form-control d-inline-block w-auto" value="' . (int)$courseid . '" min="0"></div>';
+echo '<select name="courseid" id="bulk-courseid" class="form-select d-inline-block w-auto">';
+echo '<option value="0">' . get_string('all') . '</option>';
+foreach ($courses as $cid => $cname) {
+    $selected = ((int)$courseid === (int)$cid) ? ' selected' : '';
+    echo '<option value="' . (int)$cid . '"' . $selected . '>' . format_string($cname) . '</option>';
+}
+echo '</select></div>';
 
 echo '<div class="mb-2" id="bulk-class-row" style="display:none;"><label class="me-2">' . get_string('class', 'local_message_audit') . '</label>';
 echo '<select name="classkey" id="bulk-classkey" class="form-select d-inline-block w-auto">';
 echo '<option value="">-- ' . get_string('choose') . ' --</option>';
 foreach ($classes as $key => $label) {
     echo '<option value="' . s($key) . '"' . ($classkey === $key ? ' selected' : '') . '>' . s($label) . '</option>';
-}
-echo '</select></div>';
-
-echo '<div class="mb-2" id="bulk-cohort-row" style="display:none;"><label class="me-2">' . get_string('cohort', 'local_message_audit') . '</label>';
-echo '<select name="cohortid" id="bulk-cohortid" class="form-select d-inline-block w-auto">';
-echo '<option value="0">-- ' . get_string('choose') . ' --</option>';
-foreach ($cohorts as $cid => $name) {
-    echo '<option value="' . (int)$cid . '"' . ($cohortid == $cid ? ' selected' : '') . '>' . s($name) . '</option>';
 }
 echo '</select></div>';
 
@@ -104,29 +108,29 @@ $form2 = '<form method="post" action="bulk.php">';
 $form2 .= '<input type="hidden" name="target" id="bulk-post-target" value="' . s($target) . '">';
 $form2 .= '<input type="hidden" name="courseid" id="bulk-post-courseid" value="' . (int)$courseid . '">';
 $form2 .= '<input type="hidden" name="classkey" id="bulk-post-classkey" value="' . s($classkey) . '">';
-$form2 .= '<input type="hidden" name="cohortid" id="bulk-post-cohortid" value="' . (int)$cohortid . '">';
+$form2 .= '<input type="hidden" name="cohortid" value="0">';
 $form2 .= '<input type="hidden" name="confirm" value="1">';
 $form2 .= '<input type="hidden" name="sesskey" value="' . sesskey() . '">';
 $form2 .= '<label class="form-label">' . get_string('message', 'local_message_audit') . '</label><br><textarea name="message" class="form-control" rows="4" cols="60" required></textarea><br>';
 $form2 .= '<button type="submit" id="bulk-send-btn" class="btn btn-primary mt-2" ' . ($count === 0 ? ' disabled' : '') . '>' . get_string('send_to_n_recipients', 'local_message_audit', $count) . '</button></form>';
 echo $form2;
 
+$sendToLabelTemplate = get_string('send_to_n_recipients', 'local_message_audit', '%s');
 $PAGE->requires->js_amd_inline("
 require(['jquery'], function($) {
     var countUrl = " . json_encode((new moodle_url('/local/message_audit/bulk_count.php'))->out(false)) . ";
+    var sendToLabelTemplate = " . json_encode($sendToLabelTemplate) . ";
     var updateTimer = null;
     function syncPostHidden() {
         $('#bulk-post-target').val($('#bulk-target').val());
         $('#bulk-post-courseid').val($('#bulk-courseid').val() || 0);
         $('#bulk-post-classkey').val($('#bulk-classkey').val() || '');
-        $('#bulk-post-cohortid').val($('#bulk-cohortid').val() || 0);
     }
     function updateCount() {
         var data = {
             target: $('#bulk-target').val(),
             courseid: $('#bulk-courseid').val() || 0,
-            classkey: $('#bulk-classkey').val() || '',
-            cohortid: $('#bulk-cohortid').val() || 0
+            classkey: $('#bulk-classkey').val() || ''
         };
         $.ajax({
             url: countUrl,
@@ -136,7 +140,7 @@ require(['jquery'], function($) {
         }).done(function(resp) {
             var c = parseInt(resp.count, 10) || 0;
             $('#bulk-recipient-count').text(c);
-            $('#bulk-send-btn').prop('disabled', c === 0);
+            $('#bulk-send-btn').prop('disabled', c === 0).text(sendToLabelTemplate.replace('%s', c));
         });
     }
     function scheduleUpdate() {
@@ -150,7 +154,6 @@ require(['jquery'], function($) {
         var t = $('#bulk-target').val();
         $('#bulk-course-row').toggle(t === 'students' || t === 'teachers' || t === 'parents' || t === 'all');
         $('#bulk-class-row').toggle(t === 'class_students' || t === 'class_teachers' || t === 'class_all' || t === 'parents_of_class');
-        $('#bulk-cohort-row').toggle(t === 'cohort');
     }
     $('#bulk-filter-form').on('submit', function(e) {
         e.preventDefault();
@@ -162,7 +165,6 @@ require(['jquery'], function($) {
     });
     $('#bulk-courseid').on('input change', scheduleUpdate);
     $('#bulk-classkey').on('change', scheduleUpdate);
-    $('#bulk-cohortid').on('change', scheduleUpdate);
     bulkToggle();
     syncPostHidden();
 });
