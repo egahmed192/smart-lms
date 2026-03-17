@@ -26,10 +26,15 @@ class observer {
      * @param \core\event\message_sent $event
      */
     public static function message_sent(\core\event\message_sent $event): void {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/local/message_audit/lib.php');
         $senderid = (int) $event->userid;
         $receiverid = (int) $event->relateduserid;
         $courseid = isset($event->other['courseid']) ? (int) $event->other['courseid'] : null;
+        // Messaging API uses the site course (id=1) for direct messages; treat that as "no course" in our log.
+        if ($courseid === 1) {
+            $courseid = null;
+        }
         $messageid = (int) $event->objectid;
 
         $messageText = '';
@@ -44,7 +49,7 @@ class observer {
 
         // Student–parent restriction: only teachers/supervisors (with capability) may send student–parent messages.
         $studentparentviolation = false;
-        if (local_message_audit_is_student_parent_exchange($senderid, $receiverid)) {
+        if (\local_message_audit_is_student_parent_exchange($senderid, $receiverid)) {
             $context = \context_system::instance();
             $sender = $DB->get_record('user', ['id' => $senderid]);
             if ($sender && !has_capability('local/message_audit:message_student_parent', $context, $sender)) {
@@ -61,6 +66,16 @@ class observer {
                     $reason = $kw->pattern;
                     $matchedaction = $kw->action ?? 'flag';
                     break;
+                }
+            }
+            // Optional: flag Egyptian phone numbers.
+            if (!$flagged && (int)get_config('local_message_audit', 'flag_egyptian_phones')) {
+                // Match Egyptian numbers like: 01xxxxxxxxx, +201xxxxxxxxx, 00201xxxxxxxxx (allow spaces/dashes).
+                $re = '/(?:\\+?20|0020)?\\s*0?1\\s*[0-9\\s-]{9,12}/u';
+                if (preg_match($re, $messageText)) {
+                    $flagged = 1;
+                    $reason = get_string('flag_reason_egyptian_phone', 'local_message_audit');
+                    $matchedaction = 'flag';
                 }
             }
         } else {
@@ -84,7 +99,7 @@ class observer {
             $DB->delete_records('messages', ['id' => $messageid]);
         }
 
-        if ($flagged && $matchedaction === 'notify_admin') {
+        if ($flagged && ($matchedaction === 'notify_admin' || $matchedaction === 'flag_and_notify')) {
             self::notify_view_logs_users($senderid, $receiverid, $reason, $messageText);
         }
     }

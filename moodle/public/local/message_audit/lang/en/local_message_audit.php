@@ -25,6 +25,9 @@ $string['no_keywords'] = 'No keyword rules.';
 $string['pattern'] = 'Pattern';
 $string['severity'] = 'Severity';
 $string['action'] = 'Action';
+$string['action_flag'] = 'Flag';
+$string['action_notify_admin'] = 'Notify admin';
+$string['action_flag_and_notify'] = 'Flag and notify';
 $string['bulk_sent'] = 'Bulk message sent to {$a} recipients.';
 $string['student_parent_violation'] = 'Student–parent messaging not allowed (sender lacks capability).';
 $string['target'] = 'Target';
@@ -56,3 +59,39 @@ Preview: {$a->preview}
 
 View the message log for details.';
 $string['bulk_send_notification'] = 'Bulk message sent to {$a} recipients.';
+$string['bulk_sending'] = 'Sending bulk messages';
+$string['bulk_progress_intro'] = 'Sending to {$a} recipients. Please wait…';
+$string['bulk_progress_status'] = 'Sent {$a->sent} of {$a->total}';
+$string['bulk_progress_nodata'] = 'No bulk send in progress.';
+$string['bulk_progress_error'] = 'An error occurred while sending.';
+$string['back_to_bulk'] = 'Back to bulk message';
+
+// Phone number flagging.
+$string['flag_egyptian_phones'] = 'Flag Egyptian phone numbers';
+$string['flag_egyptian_phones_help'] = 'If enabled, messages containing Egyptian phone numbers (e.g. +20..., 0020..., or 01xxxxxxxxx) will be automatically flagged.';
+$string['flag_reason_egyptian_phone'] = 'Egyptian phone number detected';
+
+// Log filters.
+$string['filters_heading'] = 'Filters';
+$string['filter_apply'] = 'Apply filters';
+$string['filter_reset'] = 'Reset';
+$string['senderid'] = 'Sender user ID';
+$string['receiverid'] = 'Receiver user ID';
+$string['anyuserid'] = 'Any user ID (sender or receiver)';
+$string['courseid'] = 'Course ID';
+$string['reason'] = 'Reason';
+$string['message_contains'] = 'Message contains';
+$string['date_from'] = 'From date';
+$string['date_to'] = 'To date';
+$string['use_date_from'] = 'Use from date';
+$string['use_date_to'] = 'Use to date';
+$string['sortby'] = 'Sort by';
+$string['sortdir'] = 'Direction';
+$string['sort_asc'] = 'Ascending';
+$string['sort_desc'] = 'Descending';
+$string['sort_time'] = 'Time';
+$string['sort_sender'] = 'Sender';
+$string['sort_receiver'] = 'Receiver';
+$string['sort_course'] = 'Course';
+$string['sort_flagged'] = 'Flagged';
+$string['sort_bulk'] = 'Bulk message';

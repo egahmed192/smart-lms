@@ -19,17 +19,34 @@ defined('MOODLE_INTERNAL') || die();
 class observer {
 
     /**
-     * On user login, block access if license is expired.
+     * On user login:
+     *  - If user holds the 'parent' role at system context → send them straight to the parent portal.
+     *  - Otherwise check Odoo license validity and block if expired.
      *
      * @param \core\event\user_loggedin $event
      */
     public static function user_loggedin(\core\event\user_loggedin $event): void {
+        global $DB;
         require_once(__DIR__ . '/../lib.php');
+
         $userid = $event->userid;
+
+        // Redirect parents directly to their portal dashboard.
+        $parentrole = $DB->get_record('role', ['shortname' => 'parent'], 'id', IGNORE_MISSING);
+        if ($parentrole) {
+            $sysctx = \context_system::instance();
+            if (user_has_role_assignment($userid, $parentrole->id, $sysctx->id)) {
+                redirect(new \moodle_url('/local/parent_portal/dashboard.php'));
+            }
+        }
+
+        // For all other Odoo-managed accounts, enforce license expiry.
         if (local_odoo_sync_is_license_valid($userid)) {
             return;
         }
         local_odoo_sync_license_audit_log($userid, 'access_blocked');
+        // Immediately terminate the session so the user is not actually logged in.
+        require_logout();
         redirect(new \moodle_url('/local/odoo_sync/blocked.php'));
     }
 

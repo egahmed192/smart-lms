@@ -15,7 +15,7 @@
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 require_once($CFG->dirroot . '/local/odoo_sync/lib.php');
-require_once($CFG->dirroot . '/enrol/lib.php');
+require_once($CFG->dirroot . '/lib/enrollib.php');
 
 require_login(null, false);
 $studentid = required_param('studentid', PARAM_INT);
@@ -119,7 +119,8 @@ if (function_exists('local_assessments_get_course_totals')) {
         echo html_writer::tag('p', get_string('child_no_grades', 'local_parent_portal'));
     }
 } else {
-    $gradeurl = new moodle_url('/grade/report/user/index.php', ['userid' => $studentid]);
+    // Fall back to the core grade overview report (no course id required).
+    $gradeurl = new moodle_url('/grade/report/overview/index.php', ['userid' => $studentid]);
     echo html_writer::tag('p', get_string('child_grades_link_intro', 'local_parent_portal'));
     echo html_writer::link($gradeurl, get_string('view_grades', 'local_parent_portal'));
 }

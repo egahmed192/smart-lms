@@ -15,6 +15,8 @@
 namespace local_odoo_sync;
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
+require_once($CFG->libdir . '/filelib.php');
 
 /**
  * Odoo LMS API client (JSON-RPC 2.0).

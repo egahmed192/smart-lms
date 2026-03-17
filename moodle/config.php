@@ -13,13 +13,13 @@ $CFG->dbpass    = '';       // No password (XAMPP default)
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
-  'dbport' => 3306,         // MySQL on 3306
+  'dbport' => 3306,         // MySQL default port
   'dbsocket' => '',
   'dbcollation' => 'utf8mb4_unicode_ci',
 );
 
 $CFG->wwwroot   = 'http://localhost:8080/moodle';
-$CFG->dataroot  = 'C:\\xampp\\htdocs/moodledata';
+$CFG->dataroot  = 'C:\\xampp\\htdocs\\moodledata';
 $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
