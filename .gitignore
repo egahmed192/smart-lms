@@ -7,3 +7,5 @@
 # Local Moodle configuration (contains environment-specific secrets/paths)
 /moodle/config.php
 
+config.bat
+node_modules
