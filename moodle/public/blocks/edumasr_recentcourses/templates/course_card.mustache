@@ -1,0 +1,25 @@
+{{!
+    @template block_edumasr_recentcourses/course_card
+
+    EDUMASR-style course card: image, category tag, title, participant count, arrow link.
+}}
+<div class="card edumasr-course-card h-100 border-0 shadow-sm" role="listitem" data-course-id="{{id}}">
+    <a href="{{viewurl}}" class="edumasr-course-card-link text-decoration-none text-dark">
+        <div class="edumasr-course-card-image" style="background-image: url('{{{courseimage}}}');">
+            <span class="visually-hidden">{{fullname}}</span>
+        </div>
+        <div class="edumasr-course-card-body">
+            {{#showcoursecategory}}
+            <span class="edumasr-course-card-tag">{{{coursecategory}}}</span>
+            {{/showcoursecategory}}
+            <h3 class="edumasr-course-card-title">{{{fullname}}}</h3>
+            {{#participantcount}}
+            <p class="edumasr-course-card-meta mb-0">
+                <span class="edumasr-course-card-participants">{{participantcount}} {{#str}}participants, block_edumasr_recentcourses{{/str}}</span>
+            </p>
+            {{/participantcount}}
+            <span class="edumasr-course-card-arrow" aria-hidden="true">&rarr;</span>
+        </div>
+    </a>
+</div>
+

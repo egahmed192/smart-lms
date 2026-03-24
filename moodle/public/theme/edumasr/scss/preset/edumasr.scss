@@ -1,0 +1,69 @@
+//
+// Edumasr Academy - Orange/Yellow color scheme
+// Based on Boost default preset with EDUMASR ACADEMY design colors
+//
+
+$prefix: bs- !default;
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #8f959e !default;
+$gray-600: #6a737b !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #1d2125 !default;
+$black: #000 !default;
+
+$blue: #0f6cbf !default;
+$orange: #ff7518 !default;
+$yellow: #f0ad4e !default;
+$green: #357a32 !default;
+$red: #ca3120 !default;
+$cyan: #008196 !default;
+
+// EDUMASR ACADEMY: Orange primary, yellow accent
+$primary: $orange !default;
+$secondary: $yellow !default;
+$success: $green !default;
+$info: $cyan !default;
+$warning: $yellow !default;
+$danger: $red !default;
+$light: $gray-100 !default;
+$dark: $gray-900 !default;
+
+$theme-colors: () !default;
+$theme-colors: map-merge((
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "light": $light,
+    "dark": $dark
+), $theme-colors);
+
+$font-size-base: 0.9375rem !default;
+$link-decoration: none !default;
+$link-hover-decoration: underline !default;
+$border-radius: .5rem !default;
+$border-radius-lg: .6rem !default;
+$behatsite: false !default;
+$enable-transitions: not $behatsite !default;
+$enable-smooth-scroll: not $behatsite !default;
+
+@import "fontawesome";
+@import "bootstrap";
+@import "moodle";
+
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.navbar { box-shadow: 0 2px 4px rgba(0, 0, 0, .08); }
+.userpicture { border-radius: 50%; }
+
+$info-outline: #1f7e9a;
+$warning-outline: #a6670e;
+.btn-outline-secondary { @include button-outline-variant($gray-600); border-color: $gray-600; }
+.btn-outline-info { @include button-outline-variant($info-outline); }
+.btn-outline-warning { @include button-outline-variant($warning-outline); }

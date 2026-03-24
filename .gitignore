@@ -1,9 +1,56 @@
-# Ignore all .cache files
-*.cache
-
-# Moodle data and local cache directories (never commit runtime data)
+# Moodle runtime data (never commit)
 /moodledata/
 
-# Local Moodle configuration (contains environment-specific secrets/paths)
+# Environment-specific Moodle config (secrets, DB credentials, paths)
 /moodle/config.php
 
+# Cache
+*.cache
+
+# Composer / PHP
+/vendor/
+composer.phar
+
+# Node (if used at repo root)
+node_modules/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Local database dumps and SQL exports (repository root)
+/*.sql
+*.sql.gz
+*.dump
+
+# HTTP archives (may contain tokens or session data)
+*.har
+
+# Local XAMPP / Bitnami metadata (machine-specific)
+/xampp/
+
+# Local backup snapshots (large; prefer git tags or releases)
+/_custom-backups/
+
+# Logs (avoid matching paths like aws-sdk/.../data/logs/)
+*.log
+/logs/
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# PHPUnit / coverage
+.phpunit.result.cache
+coverage/

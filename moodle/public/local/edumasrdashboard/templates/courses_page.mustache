@@ -1,0 +1,73 @@
+{{!
+    @template local_edumasrdashboard/courses_page
+
+    Custom My Courses view: title, subtitle, filter tabs, course card grid, pagination.
+}}
+<div class="edumasr-courses-page" data-region="courses-page">
+    <div class="edumasr-courses-header">
+        <h1 class="edumasr-courses-title">{{title}}</h1>
+        <p class="edumasr-courses-subtitle">{{subtitle}}</p>
+    </div>
+
+    <div class="edumasr-courses-tabs">
+        {{#tabs}}
+        <a href="{{url}}" class="edumasr-courses-tab {{#active}}active{{/active}}">{{label}}{{#count}} ({{.}}){{/count}}</a>
+        {{/tabs}}
+    </div>
+
+    {{#hascourses}}
+    <div class="edumasr-courses-grid">
+        {{#courses}}
+        <div class="edumasr-course-card">
+            <a href="{{viewurl}}" class="edumasr-course-card-link">
+                <div class="edumasr-course-card-image" style="background-image: url('{{courseimage}}');">
+                    {{#coursecategory}}
+                    <span class="edumasr-course-card-category">{{{coursecategory}}}</span>
+                    {{/coursecategory}}
+                </div>
+                <div class="edumasr-course-card-body">
+                    <h3 class="edumasr-course-card-title">{{{fullname}}}</h3>
+                    {{#instructor}}
+                    <p class="edumasr-course-card-instructor">{{instructor}}</p>
+                    {{/instructor}}
+                    <div class="edumasr-course-card-progress">
+                        {{#completed}}
+                        <span class="edumasr-course-badge completed">{{#str}}completed, local_edumasrdashboard{{/str}}</span>
+                        {{/completed}}
+                        {{^completed}}
+                        <span class="edumasr-course-progress-label">{{#str}}progress, local_edumasrdashboard{{/str}}</span>
+                        <div class="progress edumasr-course-progress-bar">
+                            <div class="progress-bar" role="progressbar" style="width: {{progress}}%" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <span class="edumasr-course-progress-pct">{{progress}}%</span>
+                        {{/completed}}
+                    </div>
+                </div>
+            </a>
+        </div>
+        {{/courses}}
+    </div>
+
+    {{#showpagination}}
+    <nav class="edumasr-courses-pagination" aria-label="{{#str}}pagination, local_edumasrdashboard{{/str}}">
+        {{#pagination}}
+        {{#prevurl}}
+        <a href="{{prevurl}}" class="edumasr-courses-pagination-link">{{#str}}previous, moodle{{/str}}</a>
+        {{/prevurl}}
+        {{#pages}}
+        <a href="{{url}}" class="edumasr-courses-pagination-num {{#active}}active{{/active}}" {{#active}}aria-current="page"{{/active}}>{{num}}</a>
+        {{/pages}}
+        {{#nexturl}}
+        <a href="{{nexturl}}" class="edumasr-courses-pagination-link">{{#str}}next, moodle{{/str}}</a>
+        {{/nexturl}}
+        {{/pagination}}
+    </nav>
+    {{/showpagination}}
+    {{/hascourses}}
+
+    {{^hascourses}}
+    <div class="edumasr-courses-empty">
+        <p>{{#str}}nocourses, local_edumasrdashboard{{/str}}</p>
+    </div>
+    {{/hascourses}}
+</div>

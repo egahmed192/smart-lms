@@ -1,0 +1,719 @@
+//
+// Edumasr Academy - Full dashboard layout (fixed sidebar, block grid)
+// Style matched to EDUMASR ACADEMY dashboard reference
+//
+
+// Design tokens from reference
+$edumasr-bg: #F7F8FA;
+$edumasr-card-bg: #FFFFFF;
+$edumasr-accent: #FFC107;
+$edumasr-accent-alt: #ff7518;
+$edumasr-text: #333333;
+$edumasr-text-secondary: #666666;
+$edumasr-text-muted: #888888;
+$edumasr-border: rgba(0, 0, 0, 0.08);
+$edumasr-radius: 0.75rem;
+$edumasr-radius-sm: 0.5rem;
+$edumasr-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+$edumasr-shadow-header: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+body.edumasr-dashboard-layout {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+
+    &.limitedwidth .edumasr-main,
+    &.limitedwidth .edumasr-content {
+        max-width: none;
+    }
+}
+
+.edumasr-dashboard-wrapper {
+    padding-top: 0;
+}
+
+.edumasr-dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+// Fixed left sidebar
+.edumasr-sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: #fff;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1030;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.edumasr-sidebar-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.edumasr-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.edumasr-logo-img {
+    max-height: 40px;
+    width: auto;
+}
+
+.edumasr-logo-text {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.edumasr-sidebar-nav {
+    flex: 1;
+    padding: 1rem 0.75rem;
+    overflow-y: auto;
+}
+
+.edumasr-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: $edumasr-radius-sm;
+    color: $edumasr-text-secondary;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: rgba(255, 193, 7, 0.12);
+        color: darken($edumasr-accent, 15%);
+    }
+
+    &.active {
+        background: $edumasr-accent;
+        color: $edumasr-text;
+        font-weight: 600;
+    }
+}
+
+.edumasr-nav-icon {
+    width: 1.25rem;
+    margin-right: 0.75rem;
+    text-align: center;
+}
+
+.edumasr-sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.edumasr-pro-support {
+    background: linear-gradient(135deg, #f0ad4e 0%, #ff7518 100%);
+    color: #fff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.edumasr-pro-support-text {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.edumasr-upgrade-btn {
+    background: #fff !important;
+    color: #ff7518 !important;
+    border: none !important;
+}
+
+// Main content area
+.edumasr-main {
+    flex: 1;
+    margin-left: 260px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: $edumasr-bg;
+}
+
+// Top bar
+.edumasr-topbar {
+    background: $edumasr-card-bg;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: $edumasr-shadow-header;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+.edumasr-search-wrapper {
+    flex: 1;
+    max-width: 480px;
+}
+
+.edumasr-search-form {
+    position: relative;
+}
+
+.edumasr-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8f959e;
+}
+
+.edumasr-search-input {
+    width: 100%;
+    padding: 0.6rem 1rem 0.6rem 2.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+
+    &:focus {
+        border-color: #ff7518;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 117, 24, 0.2);
+    }
+}
+
+.edumasr-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.edumasr-usermenu {
+    display: flex;
+    align-items: center;
+}
+
+// Page content
+.edumasr-content {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+// Block grid
+.edumasr-blocks-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+
+    &.edumasr-blocks-single {
+        grid-template-columns: 1fr;
+    }
+}
+
+.edumasr-blocks-left {
+    min-width: 0;
+}
+
+.edumasr-blocks-right {
+    .block {
+        margin-bottom: 1rem;
+    }
+}
+
+.edumasr-main-content {
+    // 2-column grid for blocks when all in content (Timeline, Online users, Recent activity -> right col)
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+
+    .block_edumasr_welcomebanner,
+    .block_recentlyaccessedcourses,
+    .block_myoverview,
+    .block_calendar_month,
+    .block_html {
+        grid-column: 1;
+    }
+
+    .block_timeline,
+    .block_online_users,
+    .block_recent_activity {
+        grid-column: 2;
+    }
+
+    .block {
+        background: $edumasr-card-bg;
+        border-radius: $edumasr-radius;
+        box-shadow: $edumasr-shadow;
+        border: none;
+        overflow: hidden;
+
+        .card {
+            border: none;
+            border-radius: 0;
+        }
+
+        .card-header {
+            background: $edumasr-card-bg;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            color: $edumasr-text;
+        }
+    }
+
+    // Welcome banner block - orange banner fills full width and height of parent card
+    .block_edumasr_welcomebanner {
+        height: 100%;
+        min-height: 240px;
+        display: flex;
+        flex-direction: column;
+
+        .card-body {
+            position: relative;
+            padding: 0 !important;
+            border: none;
+            flex: 1;
+            min-height: 220px;
+        }
+
+        .edumasr-welcome-block {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            background: linear-gradient(135deg, $edumasr-accent-alt 0%, $edumasr-accent 100%);
+            color: #fff;
+            padding: 2rem 2.5rem;
+            border-radius: $edumasr-radius;
+            box-shadow: 0 4px 20px rgba(255, 117, 24, 0.35);
+            overflow: hidden;
+
+            &::after {
+                content: '';
+                position: absolute;
+                right: -5%;
+                top: -20%;
+                bottom: -20%;
+                width: 45%;
+                background: rgba(255, 255, 255, 0.12);
+                border-radius: 50% 0 0 50%;
+            }
+        }
+
+        .edumasr-welcome-greeting {
+            position: relative;
+            z-index: 1;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+            line-height: 1.3;
+            color: #fff;
+        }
+
+        .edumasr-welcome-hand {
+            display: inline-block;
+            font-size: 1.25em;
+            transform-origin: 70% 70%;
+            animation: edumasr-wave 1.2s ease-in-out infinite;
+        }
+
+        .edumasr-welcome-subtitle {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+            opacity: 0.95;
+            color: #fff;
+        }
+
+        .btn-outline-primary {
+            position: relative;
+            z-index: 1;
+            align-self: flex-start;
+            width: auto;
+            background: #fff !important;
+            border: 2px solid #fff !important;
+            color: $edumasr-accent-alt !important;
+            font-weight: 600;
+            padding: 0.5rem 1.25rem;
+            border-radius: $edumasr-radius-sm;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.95) !important;
+                border-color: #fff !important;
+                color: $edumasr-accent-alt !important;
+            }
+        }
+    }
+
+    @keyframes edumasr-wave {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(20deg); }
+        75% { transform: rotate(-15deg); }
+    }
+
+    .progress {
+        border-radius: 0.5rem;
+        height: 0.5rem;
+
+        .progress-bar {
+            background-color: #ff7518;
+        }
+    }
+}
+
+// Single column when side-pre has blocks (blocks split between content + side-pre)
+.edumasr-blocks-grid:not(.edumasr-blocks-single) .edumasr-main-content {
+    grid-template-columns: 1fr;
+}
+
+// Course index in sidebar (drawers layout)
+.edumasr-sidebar-courseindex {
+    padding: 0.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin-top: auto;
+}
+
+.edumasr-courseindex-header {
+    margin-bottom: 0.5rem;
+}
+
+.edumasr-courseindex-content {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+// Login page
+.edumasr-login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edumasr-login-card {
+    border-radius: 0.6rem;
+}
+
+// Recently accessed courses block - EDUMASR-style cards (image, tag, title, participants, arrow)
+.block-edumasr-recentcourses {
+    .edumasr-course-card {
+        border-radius: 0.6rem;
+        overflow: hidden;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+        &:hover {
+            box-shadow: 0 6px 20px rgba(255, 117, 24, 0.2) !important;
+            transform: translateY(-2px);
+        }
+    }
+
+    .edumasr-course-card-link {
+        display: block;
+    }
+
+    .edumasr-course-card-image {
+        height: 140px;
+        background-size: cover;
+        background-position: center;
+        background-color: #e9ecef;
+    }
+
+    .edumasr-course-card-body {
+        padding: 1rem 1.25rem;
+        position: relative;
+    }
+
+    .edumasr-course-card-tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #ff7518;
+        background: rgba(255, 117, 24, 0.12);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.35rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .edumasr-course-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 0.35rem 0;
+        line-height: 1.35;
+        color: #1d2125;
+    }
+
+    .edumasr-course-card-meta {
+        font-size: 0.8rem;
+        color: #6a737b;
+    }
+
+    .edumasr-course-card-arrow {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        font-size: 1.25rem;
+        color: #ff7518;
+        font-weight: bold;
+    }
+}
+
+// Right column blocks
+.edumasr-blocks-right .block {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: none;
+}
+
+// Mobile: single column, collapsible sidebar
+@media (max-width: 991.98px) {
+    .edumasr-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .edumasr-sidebar.show {
+        transform: translateX(0);
+    }
+
+    .edumasr-main {
+        margin-left: 0;
+    }
+
+    .edumasr-blocks-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .edumasr-blocks-right {
+        order: -1;
+    }
+}
+
+// Messages page layout: full-width main content (no blocks column), message app fills the area
+.edumasr-messages-layout {
+    .edumasr-blocks-grid.edumasr-main-fullwidth {
+        grid-template-columns: 1fr;
+    }
+
+    .edumasr-main-content {
+        display: block;
+        min-height: 70vh;
+
+        .message-app.main {
+            min-height: 70vh;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+    }
+}
+
+// Custom My Courses view (card grid, tabs, pagination)
+.edumasr-courses-page {
+    $card-radius: 0.75rem;
+    $accent: #ff7518;
+    $accent-yellow: #FFC107;
+
+    .edumasr-courses-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .edumasr-courses-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $edumasr-text;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .edumasr-courses-subtitle {
+        font-size: 0.95rem;
+        color: $edumasr-text-muted;
+        margin: 0;
+    }
+
+    .edumasr-courses-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .edumasr-courses-tab {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: $card-radius;
+        font-weight: 500;
+        text-decoration: none;
+        color: $edumasr-text-secondary;
+        background: $edumasr-card-bg;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transition: background 0.2s, color 0.2s;
+
+        &:hover {
+            background: rgba($accent, 0.08);
+            color: $accent;
+        }
+
+        &.active {
+            background: $accent;
+            color: #fff;
+            border-color: $accent;
+        }
+    }
+
+    .edumasr-courses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .edumasr-course-card {
+        background: $edumasr-card-bg;
+        border-radius: $card-radius;
+        box-shadow: $edumasr-shadow;
+        overflow: hidden;
+        transition: box-shadow 0.2s, transform 0.2s;
+
+        &:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+    }
+
+    .edumasr-course-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .edumasr-course-card-image {
+        position: relative;
+        height: 160px;
+        background-size: cover;
+        background-position: center;
+        background-color: #e9ecef;
+    }
+
+    .edumasr-course-card-category {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 0.35rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+    }
+
+    .edumasr-course-card-body {
+        padding: 1.25rem;
+    }
+
+    .edumasr-course-card-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin: 0 0 0.35rem 0;
+        color: $edumasr-text;
+        line-height: 1.35;
+    }
+
+    .edumasr-course-card-instructor {
+        font-size: 0.875rem;
+        color: $edumasr-text-muted;
+        margin: 0 0 0.75rem 0;
+    }
+
+    .edumasr-course-card-progress {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .edumasr-course-progress-label {
+        font-size: 0.8rem;
+        color: $edumasr-text-muted;
+        margin-right: 0.25rem;
+    }
+
+    .edumasr-course-progress-bar {
+        flex: 1;
+        min-width: 80px;
+        height: 6px;
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 3px;
+
+        .progress-bar {
+            background: $accent;
+        }
+    }
+
+    .edumasr-course-progress-pct {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: $edumasr-text;
+    }
+
+    .edumasr-course-badge.completed {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        border-radius: 0.35rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: #28a745;
+        color: #fff;
+    }
+
+    .edumasr-courses-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .edumasr-courses-pagination-link,
+    .edumasr-courses-pagination-num {
+        padding: 0.4rem 0.75rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-size: 0.9rem;
+        color: $edumasr-text-secondary;
+        background: $edumasr-card-bg;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .edumasr-courses-pagination-num.active {
+        background: $accent;
+        color: #fff;
+        border-color: $accent;
+    }
+
+    .edumasr-courses-pagination-link:hover,
+    .edumasr-courses-pagination-num:hover:not(.active) {
+        background: rgba($accent, 0.1);
+        color: $accent;
+    }
+
+    .edumasr-courses-empty {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: $edumasr-text-muted;
+    }
+}
+
