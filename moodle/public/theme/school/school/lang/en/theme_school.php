@@ -16,10 +16,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['lowbandwidth:on'] = 'Low bandwidth: on';
-$string['lowbandwidth:off'] = 'Low bandwidth: off';
-$string['lowbandwidth:toggle'] = 'Toggle low bandwidth mode';
-
 $string['pluginname'] = 'School';
 $string['configtitle'] = 'School';
 $string['region-side-pre'] = 'Right';
