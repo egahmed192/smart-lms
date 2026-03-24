@@ -52,5 +52,53 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
         return parent::get_home_url();
     }
+
+    /**
+     * Add a body class when low bandwidth mode is enabled.
+     *
+     * @param array $additionalclasses
+     * @return string
+     */
+    public function body_css_classes($additionalclasses = []) {
+        if (!is_array($additionalclasses)) {
+            $additionalclasses = explode(' ', (string)$additionalclasses);
+        }
+
+        if (isloggedin() && !isguestuser() && (int)get_user_preferences('theme_school_lowbandwidth', 0) === 1) {
+            $additionalclasses[] = 'theme-school-lowbandwidth';
+        }
+
+        return parent::body_css_classes($additionalclasses);
+    }
+
+    /**
+     * Add a small footer toggle for low bandwidth mode.
+     *
+     * @return string
+     */
+    public function standard_footer_html() {
+        global $PAGE;
+
+        $html = parent::standard_footer_html();
+
+        if (!isloggedin() || isguestuser()) {
+            return $html;
+        }
+
+        $enabled = (int)get_user_preferences('theme_school_lowbandwidth', 0) === 1;
+        $label = $enabled ? get_string('lowbandwidth:on', 'theme_school') : get_string('lowbandwidth:off', 'theme_school');
+        $returnurl = $PAGE->url->out(false);
+        $toggleurl = new \moodle_url('/theme/school/lowbandwidth.php', [
+            'sesskey' => sesskey(),
+            'returnurl' => $returnurl,
+        ]);
+
+        $toggle = \html_writer::link($toggleurl, s($label), [
+            'class' => 'small text-muted',
+            'title' => get_string('lowbandwidth:toggle', 'theme_school'),
+        ]);
+
+        return $html . \html_writer::div($toggle, 'mt-2 text-center');
+    }
 }
 

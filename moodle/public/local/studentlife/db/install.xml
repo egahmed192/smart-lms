@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/studentlife/db" VERSION="2026031803" COMMENT="Student life plugin tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="local_studentlife_task" COMMENT="Study planner tasks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Owner user id"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Optional course id"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="estimatedminutes" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="duetime" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Due timestamp"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Optional course module id"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_user_course_due" UNIQUE="false" FIELDS="userid,courseid,duetime"/>
+        <INDEX NAME="idx_user_completed" UNIQUE="false" FIELDS="userid,completed"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_studentlife_notifpref" COMMENT="Per-course notification preferences">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="deadlines" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="announcements" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="grades" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="digest" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="daily"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_user_course" UNIQUE="true" FIELDS="userid,courseid"/>
+        <INDEX NAME="idx_user_digest" UNIQUE="false" FIELDS="userid,digest"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="local_studentlife_digest_item" COMMENT="Queued digest items">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="url" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_user_time" UNIQUE="false" FIELDS="userid,timecreated"/>
+        <INDEX NAME="idx_course_time" UNIQUE="false" FIELDS="courseid,timecreated"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

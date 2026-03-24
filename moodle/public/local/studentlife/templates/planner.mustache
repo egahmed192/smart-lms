@@ -1,0 +1,71 @@
+<div class="local-studentlife-planner">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="h4 m-0">{{#str}} planner, local_studentlife {{/str}}</h2>
+    <a class="btn btn-sm btn-outline-primary" href="{{baseurl}}">{{#str}} planner:addtask, local_studentlife {{/str}}</a>
+  </div>
+
+  {{#filtering_course}}
+    <div class="alert alert-secondary py-2">
+      Showing tasks for <strong>{{filtering_course}}</strong>. <a href="{{baseurl}}">Show all</a>
+    </div>
+  {{/filtering_course}}
+
+  {{#hasprogress}}
+    <div class="row mb-3">
+      {{#progresscards}}
+        <div class="col-12 col-lg-4 mb-2">
+          <a class="card text-decoration-none" href="{{url}}">
+            <div class="card-body">
+              <div class="text-muted small">{{coursename}}</div>
+              <div class="d-flex align-items-end justify-content-between">
+                <div class="h4 mb-0">{{percent}}%</div>
+                <div class="text-muted small">{{completed}} / {{total}}</div>
+              </div>
+              <div class="progress mt-2" style="height: 6px;">
+                <div class="progress-bar" role="progressbar" style="width: {{percent}}%" aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+          </a>
+        </div>
+      {{/progresscards}}
+    </div>
+  {{/hasprogress}}
+
+  <div class="card">
+    <div class="card-body">
+      <h3 class="h5 mb-3">Tasks</h3>
+      {{#has_tasks}}
+        <div class="list-group">
+          {{#tasks}}
+            <div class="list-group-item">
+              <div class="d-flex align-items-start justify-content-between">
+                <div class="mr-2">
+                  <div class="font-weight-bold {{#completed}}text-muted{{/completed}}">
+                    {{name}}
+                  </div>
+                  {{#course}}<div class="text-muted small">{{course}}</div>{{/course}}
+                  {{#duetime}}<div class="text-muted small">Due: {{duetime}}</div>{{/duetime}}
+                  {{#estimatedminutes}}<div class="text-muted small">Est: {{estimatedminutes}} min</div>{{/estimatedminutes}}
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="Task actions">
+                  <a class="btn btn-outline-secondary" href="{{editurl}}">Edit</a>
+                  {{#completed}}
+                    <a class="btn btn-outline-primary" href="{{incompleteurl}}">{{#str}} planner:markincomplete, local_studentlife {{/str}}</a>
+                  {{/completed}}
+                  {{^completed}}
+                    <a class="btn btn-outline-primary" href="{{completeurl}}">{{#str}} planner:markcomplete, local_studentlife {{/str}}</a>
+                  {{/completed}}
+                  <a class="btn btn-outline-danger" href="{{deleteurl}}">{{#str}} planner:delete, local_studentlife {{/str}}</a>
+                </div>
+              </div>
+            </div>
+          {{/tasks}}
+        </div>
+      {{/has_tasks}}
+      {{^has_tasks}}
+        <div class="text-muted">{{#str}} planner:notasks, local_studentlife {{/str}}</div>
+      {{/has_tasks}}
+    </div>
+  </div>
+</div>
+

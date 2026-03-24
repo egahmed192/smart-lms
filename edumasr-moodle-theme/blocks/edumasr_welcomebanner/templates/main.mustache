@@ -1,0 +1,17 @@
+{{!
+    Block: Welcome banner (block_edumasr_welcomebanner/main).
+    Standard block-style: welcome text + hand + View Schedule link.
+}}
+{{#showbanner}}
+<div class="edumasr-welcome-block">
+    <p class="edumasr-welcome-greeting mb-2">
+        {{#str}}welcomeback, block_edumasr_welcomebanner{{/str}} {{welcomename}}!
+        <span class="edumasr-welcome-hand" role="img" aria-label="{{#str}}wavinghand, block_edumasr_welcomebanner{{/str}}">👋</span>
+    </p>
+    <p class="edumasr-welcome-subtitle text-muted small mb-2">{{#str}}welcomesubtitle, block_edumasr_welcomebanner{{/str}}</p>
+    <a href="{{scheduleurl}}" class="btn btn-sm btn-outline-primary">{{#str}}viewschedule, block_edumasr_welcomebanner{{/str}}</a>
+</div>
+{{/showbanner}}
+{{^showbanner}}
+<p class="text-muted small mb-0">{{#str}}pluginname, block_edumasr_welcomebanner{{/str}}</p>
+{{/showbanner}}
