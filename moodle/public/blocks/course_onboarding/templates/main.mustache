@@ -1,0 +1,16 @@
+<div class="block-course-onboarding">
+  {{#hasnextactivity}}
+    <div class="mb-3">
+      <div class="text-muted small">{{#str}} nextactivity, block_course_onboarding {{/str}}</div>
+      <a class="h5 d-block mb-0" href="{{{nextactivity.url}}}">{{nextactivity.name}}</a>
+    </div>
+  {{/hasnextactivity}}
+
+  {{#hasrules}}
+    <div>
+      <div class="text-muted small">{{#str}} rules, block_course_onboarding {{/str}}</div>
+      <div class="mt-2">{{{ruleshtml}}}</div>
+    </div>
+  {{/hasrules}}
+</div>
+

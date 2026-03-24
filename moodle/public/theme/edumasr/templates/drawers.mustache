@@ -1,0 +1,146 @@
+{{!
+    @template theme_edumasr/drawers
+
+    Edumasr Academy main layout - fixed sidebar + top bar + content.
+}}
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div class="edumasr-dashboard-wrapper edumasr-layout-wrapper">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    <div class="edumasr-dashboard-container">
+        {{! Fixed left sidebar }}
+        <aside class="edumasr-sidebar" id="edumasr-sidebar">
+            <div class="edumasr-sidebar-header">
+                <a href="{{{ config.homeurl }}}" class="edumasr-logo">
+                    {{#showlogo}}
+                        <img src="{{logourl}}" class="edumasr-logo-img" alt="{{sitename}}">
+                    {{/showlogo}}
+                    {{^showlogo}}
+                        <span class="edumasr-logo-text">{{{ sitename }}}</span>
+                    {{/showlogo}}
+                </a>
+            </div>
+            <nav class="edumasr-sidebar-nav" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+                {{#sidenavitems}}
+                    <a href="{{url}}" class="edumasr-nav-item {{#isactive}}active{{/isactive}}">
+                        <i class="fa {{icon}} edumasr-nav-icon" aria-hidden="true"></i>
+                        <span>{{text}}</span>
+                    </a>
+                {{/sidenavitems}}
+            </nav>
+            {{#courseindex}}
+                <div class="edumasr-sidebar-courseindex">
+                    <div class="edumasr-courseindex-header">
+                        {{> theme_boost/courseindexdrawercontrols}}
+                    </div>
+                    <div class="edumasr-courseindex-content">
+                        {{{ courseindex }}}
+                    </div>
+                </div>
+            {{/courseindex}}
+            {{#isloggedin}}
+            <div class="edumasr-sidebar-footer">
+                <div class="edumasr-pro-support">
+                    <p class="edumasr-pro-support-text">{{#str}}upgradeassist, theme_edumasr{{/str}}</p>
+                    <a href="{{{ config.wwwroot }}}/admin/settings.php" class="btn btn-primary btn-sm edumasr-upgrade-btn">{{#str}}upgradenow, theme_edumasr{{/str}}</a>
+                </div>
+            </div>
+            {{/isloggedin}}
+        </aside>
+
+        {{! Main content area }}
+        <main class="edumasr-main">
+            <header class="edumasr-topbar">
+                <button class="edumasr-sidebar-toggle d-lg-none btn btn-link" type="button" aria-label="{{#str}}sidepanel, core{{/str}}" data-action="toggle-sidebar">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+                <div class="edumasr-search-wrapper">
+                    <form action="{{{ config.wwwroot }}}/course/search.php" method="get" class="edumasr-search-form">
+                        <i class="fa fa-search edumasr-search-icon" aria-hidden="true"></i>
+                        <input type="text" name="search" class="edumasr-search-input" placeholder="{{#str}}searchcourses, theme_edumasr{{/str}}" aria-label="{{#str}}searchcourses, theme_edumasr{{/str}}">
+                    </form>
+                </div>
+                <div class="edumasr-topbar-actions">
+                    {{# output.search_box }}
+                        <div class="edumasr-topbar-search d-none d-lg-block">{{{ output.search_box }}}</div>
+                    {{/ output.search_box }}
+                    {{#langmenu}}
+                        {{> theme_boost/language_menu }}
+                    {{/langmenu}}
+                    {{{ output.navbar_plugin_output }}}
+                    <div class="edumasr-usermenu" data-region="usermenu">
+                        {{#usermenu}}
+                            {{> core/user_menu }}
+                        {{/usermenu}}
+                    </div>
+                    {{{ output.edit_switch }}}
+                </div>
+            </header>
+
+            <div class="edumasr-content">
+                {{#hasregionmainsettingsmenu}}
+                    <div id="region-main-settings-menu" class="d-print-none">
+                        <div>{{{ regionmainsettingsmenu }}}</div>
+                    </div>
+                {{/hasregionmainsettingsmenu}}
+
+                <div class="edumasr-blocks-grid {{^hasblocks}}edumasr-blocks-single{{/hasblocks}}">
+                    <div class="edumasr-blocks-left">
+                        {{{ output.full_header }}}
+                        {{#secondarymoremenu}}
+                            <div class="secondary-navigation d-print-none">
+                                {{> core/moremenu}}
+                            </div>
+                        {{/secondarymoremenu}}
+                        <div id="page-content" class="pb-3 d-print-block">
+                            <div id="region-main-box">
+                                <div id="region-main">
+                                    {{#hasregionmainsettingsmenu}}
+                                        <div class="region_main_settings_menu_proxy"></div>
+                                    {{/hasregionmainsettingsmenu}}
+                                    {{{ output.course_content_header }}}
+                                    {{#headercontent}}
+                                        {{> core/activity_header }}
+                                    {{/headercontent}}
+                                    {{#overflow}}
+                                        <div class="container-fluid tertiary-navigation">
+                                            <div class="navitem">{{> core/url_select}}</div>
+                                        </div>
+                                    {{/overflow}}
+                                    {{{ output.main_content }}}
+                                    {{{ output.activity_navigation }}}
+                                    {{{ output.course_content_footer }}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{#hasblocks}}
+                    <aside class="edumasr-blocks-right">
+                        {{{ addblockbutton }}}
+                        {{{ sidepreblocks }}}
+                    </aside>
+                    {{/hasblocks}}
+                </div>
+            </div>
+
+            {{> theme_boost/footer }}
+        </main>
+    </div>
+    {{{ output.standard_after_main_region_html }}}
+</div>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader', 'core/jquery'], function(Loader, $) {
+    $(document).on('click', '[data-action="toggle-sidebar"]', function() {
+        document.getElementById('edumasr-sidebar').classList.toggle('show');
+    });
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

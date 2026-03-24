@@ -1,0 +1,36 @@
+{{!
+    @template theme_edumasr/login
+
+    Edumasr Academy login page.
+}}
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+
+<div id="page-wrapper" class="edumasr-login-wrapper">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    <div id="page" class="container-fluid pt-5">
+        <div id="page-content" class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="edumasr-login-card card shadow-sm border-0">
+                    <div class="card-body p-5">
+                        {{{ output.main_content }}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{> theme_boost/footer }}
+</div>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

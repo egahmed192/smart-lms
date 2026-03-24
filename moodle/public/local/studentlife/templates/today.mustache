@@ -1,0 +1,81 @@
+<div class="local-studentlife-today">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="h4 m-0">{{#str}} today, local_studentlife {{/str}}</h2>
+    <span class="text-muted small">{{generatedat}}</span>
+  </div>
+
+  <div class="row">
+    <div class="col-12 col-lg-4 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="text-muted small">Unread messages</div>
+            <a class="small" href="{{{config.wwwroot}}}/message/index.php">Open</a>
+          </div>
+          <div class="display-4 mb-0">{{unreadmessagescount}}</div>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <a class="btn btn-sm btn-outline-primary" href="{{{config.wwwroot}}}/local/studentlife/planner.php">Open study planner</a>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-8 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="h5 mb-3">Upcoming deadlines</h3>
+          {{#deadlines.has}}
+            <div class="list-group">
+              {{#deadlines.events}}
+                <a class="list-group-item list-group-item-action" href="{{{url}}}">
+                  <div class="d-flex justify-content-between">
+                    <div class="font-weight-bold">{{name}}</div>
+                    <div class="text-muted small">{{{formattedtime}}}</div>
+                  </div>
+                  {{#course}}
+                    <div class="text-muted small">{{fullname}}</div>
+                  {{/course}}
+                </a>
+              {{/deadlines.events}}
+            </div>
+          {{/deadlines.has}}
+          {{^deadlines.has}}
+            <div class="text-muted">No upcoming deadlines in the next 7 days.</div>
+          {{/deadlines.has}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h3 class="h5 mb-3">Today’s timetable</h3>
+      {{#timetable.configured}}
+        {{#timetable.has}}
+          <div class="list-group">
+            {{#timetable.events}}
+              <a class="list-group-item list-group-item-action" href="{{{url}}}">
+                <div class="d-flex justify-content-between">
+                  <div class="font-weight-bold">{{name}}</div>
+                  <div class="text-muted small">{{{formattedtime}}}</div>
+                </div>
+                {{#course}}
+                  <div class="text-muted small">{{fullname}}</div>
+                {{/course}}
+              </a>
+            {{/timetable.events}}
+          </div>
+        {{/timetable.has}}
+        {{^timetable.has}}
+          <div class="text-muted">No timetable items today.</div>
+        {{/timetable.has}}
+      {{/timetable.configured}}
+      {{^timetable.configured}}
+        <div class="text-muted">
+          Timetable isn’t configured yet. Ask an admin to set the timetable category id in Student life settings.
+        </div>
+      {{/timetable.configured}}
+    </div>
+  </div>
+</div>

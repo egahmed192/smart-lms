@@ -23,7 +23,33 @@ require_once($CFG->dirroot . '/theme/boost/lib.php');
  * @return string
  */
 function theme_school_get_main_scss_content($theme) {
-    return theme_boost_get_main_scss_content($theme);
+    $scss = theme_boost_get_main_scss_content($theme);
+
+    // Low bandwidth mode: keep it CSS-only so it works without JS.
+    $scss .= "\n\n" . '
+body.theme-school-lowbandwidth {
+  // Reduce visual noise and expensive effects.
+  scroll-behavior: auto;
+}
+body.theme-school-lowbandwidth img,
+body.theme-school-lowbandwidth video,
+body.theme-school-lowbandwidth iframe {
+  // Prefer smaller layout reflows; users can still click to view originals.
+  max-height: 360px;
+}
+body.theme-school-lowbandwidth .activityiconcontainer,
+body.theme-school-lowbandwidth .courseimage,
+body.theme-school-lowbandwidth .card-img-top {
+  display: none !important;
+}
+body.theme-school-lowbandwidth .drawer,
+body.theme-school-lowbandwidth .drawer-toggler {
+  // Avoid off-canvas animations jittering on low-end devices.
+  transition: none !important;
+}
+';
+
+    return $scss;
 }
 
 /**

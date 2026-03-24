@@ -1,0 +1,20 @@
+{{!
+    @template block_edumasr_recentcourses/main
+
+    Recently accessed courses block - server-side rendered.
+}}
+<div class="block-edumasr-recentcourses" data-region="recentlyaccessedcourses">
+    {{#hascourses}}
+    <div class="card-grid row row-cols-1 row-cols-md-2 g-2">
+        {{#courses}}
+        {{> block_edumasr_recentcourses/course_card }}
+        {{/courses}}
+    </div>
+    {{/hascourses}}
+    {{^hascourses}}
+    <div class="text-center py-4">
+        <img class="empty-placeholder-image mb-2" src="{{nocoursesimgurl}}" alt="" style="max-width:120px;">
+        <p class="text-muted mb-0">{{#str}}nocourses, block_edumasr_recentcourses{{/str}}</p>
+    </div>
+    {{/hascourses}}
+</div>
