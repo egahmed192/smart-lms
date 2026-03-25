@@ -391,14 +391,7 @@ body.edumasr-dashboard-layout {
     overflow-y: auto;
 }
 
-// Login page
-.edumasr-login-wrapper {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+// Login page (layout styles live in preset to load on login pages)
 .edumasr-login-card {
     border-radius: 0.6rem;
 }
