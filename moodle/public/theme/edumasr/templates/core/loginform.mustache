@@ -1,0 +1,209 @@
+{{!
+    @template core/loginform
+
+    Theme override: UI redesign only. Login logic must remain unchanged.
+}}
+
+<div class="loginform w-full">
+    <div class="lg:hidden mb-12">
+        <span class="text-primary font-headline font-bold text-2xl tracking-tight">{{sitename}}</span>
+    </div>
+
+    <header class="mb-10">
+        {{#logourl}}
+            <div id="loginlogo" class="mb-6">
+                <img id="logoimage" src="{{logourl}}" class="max-h-14 w-auto" alt="{{sitename}}"/>
+                <h1 class="login-heading visually-hidden">{{#str}} loginto, core, {{sitename}} {{/str}}</h1>
+            </div>
+        {{/logourl}}
+        {{^logourl}}
+            <h1 class="font-headline text-4xl lg:text-5xl font-extrabold text-on-surface mb-3 tracking-tight">
+                {{#str}} loginto, core, {{sitename}} {{/str}}
+            </h1>
+        {{/logourl}}
+        <p class="text-on-surface-variant font-body text-base lg:text-lg">Please enter your credentials to access your dashboard.</p>
+    </header>
+
+    {{#maintenance}}
+        <div class="rounded-xl bg-error/10 text-on-surface border border-error/20 p-4 mb-6">
+            {{{maintenance}}}
+        </div>
+    {{/maintenance}}
+
+    {{#error}}
+        <div class="rounded-xl bg-error/10 text-on-surface border border-error/20 p-4 mb-6" id="loginerrormessage" role="alert">{{error}}</div>
+    {{/error}}
+    {{#info}}
+        <div class="rounded-xl bg-primary/10 text-on-surface border border-primary/20 p-4 mb-6" id="logininfomessage" role="status">{{info}}</div>
+    {{/info}}
+
+    {{#showloginform}}
+        <form class="w-full space-y-6 login-form" action="{{loginurl}}" method="post" id="login">
+            <input id="anchor" type="hidden" name="anchor" value="">
+            <script>document.getElementById('anchor').value = location.hash;</script>
+            <input type="hidden" name="logintoken" value="{{logintoken}}">
+
+            <div class="space-y-2 login-form-username w-full" style="width: 100% !important; max-width: none !important;">
+                <label for="username" class="block text-base font-semibold text-on-surface-variant uppercase tracking-wider">
+                    {{^canloginbyemail}}{{#str}} username {{/str}}{{/canloginbyemail}}
+                    {{#canloginbyemail}}{{#str}} usernameemail {{/str}}{{/canloginbyemail}}
+                </label>
+                <div class="relative group">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
+                    <input type="text" name="username" id="username"
+                        class="w-full pl-12 pr-4 py-4 lg:py-5 bg-surface-container-low border-transparent focus:border-primary/40 focus:ring-4 focus:ring-primary/5 rounded-xl transition-all font-body text-lg text-on-surface placeholder:text-outline-variant"
+                        style="width: 100% !important; max-width: none !important; display: block;"
+                        value="{{username}}"
+                        placeholder="{{^canloginbyemail}}{{#cleanstr}}username{{/cleanstr}}{{/canloginbyemail}}{{#canloginbyemail}}{{#cleanstr}}usernameemail{{/cleanstr}}{{/canloginbyemail}}"
+                        autocomplete="username">
+                </div>
+            </div>
+
+            <div class="space-y-2 login-form-password w-full" style="width: 100% !important; max-width: none !important;">
+                <div class="flex justify-between items-center">
+                    <label for="password" class="block text-base font-semibold text-on-surface-variant uppercase tracking-wider">{{#str}} password {{/str}}</label>
+                    <a class="text-base font-semibold text-primary hover:text-primary-fixed-dim transition-colors" href="{{forgotpasswordurl}}">{{#str}}forgotaccount{{/str}}</a>
+                </div>
+                <div class="relative group">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock</span>
+                    <input type="password" name="password" id="password" value=""
+                        class="w-full pl-12 pr-4 py-4 lg:py-5 bg-surface-container-low border-transparent focus:border-primary/40 focus:ring-4 focus:ring-primary/5 rounded-xl transition-all font-body text-lg text-on-surface placeholder:text-outline-variant"
+                        style="width: 100% !important; max-width: none !important; display: block;"
+                        placeholder="{{#cleanstr}}password{{/cleanstr}}"
+                        autocomplete="current-password">
+                </div>
+            </div>
+
+            {{#recaptcha}}
+                <div class="login-form-recaptcha">
+                    {{{recaptcha}}}
+                </div>
+            {{/recaptcha}}
+
+            <button class="w-full primary-gradient text-white py-3 lg:py-3.5 px-5 rounded-full font-headline font-bold text-base lg:text-lg shadow-md hover:shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center"
+                    type="submit" id="loginbtn">
+                {{#str}}login{{/str}}
+            </button>
+        </form>
+    {{/showloginform}}
+
+    {{#hasidentityproviders}}
+        <div class="mt-10 pt-8 border-t border-surface-container-high">
+            <h2 class="font-headline text-base font-bold text-on-surface mb-4">{{#str}} potentialidps, auth {{/str}}</h2>
+            <div class="space-y-3 login-identityproviders">
+                {{#identityproviders}}
+                    <a class="w-full inline-flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface"
+                       href="{{url}}">
+                        {{#iconurl}}
+                            <img src="{{iconurl}}" alt="" width="24" height="24"/>
+                        {{/iconurl}}
+                        <span class="font-semibold">{{name}}</span>
+                    </a>
+                {{/identityproviders}}
+            </div>
+        </div>
+    {{/hasidentityproviders}}
+
+    {{#hasinstructions}}
+        <div class="mt-10 pt-8 border-t border-surface-container-high login-instructions {{#cansignup}}mb-3{{/cansignup}}">
+            <h2 class="font-headline text-base font-bold text-on-surface mb-3">{{#str}}firsttime{{/str}}</h2>
+            <div class="prose prose-sm max-w-none text-on-surface-variant">
+                {{{instructions}}}
+            </div>
+        </div>
+    {{/hasinstructions}}
+
+    {{#cansignup}}
+        <div class="mt-6 login-signup">
+            <a class="w-full inline-flex items-center justify-center px-4 py-3 rounded-full bg-surface-container-low hover:bg-surface-container transition-colors font-semibold text-on-surface"
+               href="{{signupurl}}">{{#str}}startsignup{{/str}}</a>
+        </div>
+    {{/cansignup}}
+
+    {{#canloginasguest}}
+        <div class="mt-10 pt-8 border-t border-surface-container-high">
+            <h2 class="font-headline text-base font-bold text-on-surface mb-4">{{#str}}someallowguest{{/str}}</h2>
+            <form action="{{loginurl}}" method="post" id="guestlogin">
+                <input type="hidden" name="logintoken" value="{{logintoken}}">
+                <input type="hidden" name="username" value="guest" />
+                <input type="hidden" name="password" value="guest" />
+                <button class="w-full inline-flex items-center justify-center px-4 py-3 rounded-full bg-surface-container-low hover:bg-surface-container transition-colors font-semibold text-on-surface"
+                        type="submit" id="loginguestbtn">{{#str}}loginguest{{/str}}</button>
+            </form>
+        </div>
+    {{/canloginasguest}}
+
+    <footer class="mt-16 pt-8 border-t border-surface-container-high">
+        <div class="flex flex-col gap-4">
+            <p class="text-sm text-on-surface-variant">© 2024 {{sitename}}. All rights reserved.</p>
+            <div class="d-flex flex-wrap gap-4 items-center">
+                {{#languagemenu}}
+                    <div class="login-languagemenu">
+                        {{>core/action_menu}}
+                    </div>
+                {{/languagemenu}}
+                <button type="button"
+                        class="text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-colors uppercase tracking-widest"
+                        data-modal="alert"
+                        data-modal-title-str='["cookiesenabled", "core"]'
+                        data-modal-content-str='["cookiesenabled_help_html", "core"]'>
+                    {{#str}}cookiesnotice{{/str}}
+                </button>
+            </div>
+        </div>
+    </footer>
+</div>
+
+{{#js}}
+    {{^error}}
+        {{#autofocusform}}
+            require(['core_form/events'], function(FormEvent) {
+                function autoFocus() {
+                    const userNameField = document.getElementById('username');
+                    const passwordField = document.getElementById('password');
+                    if (userNameField && userNameField.value.length == 0) {
+                        userNameField.focus();
+                    } else if (passwordField) {
+                        passwordField.focus();
+                    }
+                }
+                autoFocus();
+                window.addEventListener(FormEvent.eventTypes.fieldStructureChanged, autoFocus);
+            });
+        {{/autofocusform}}
+    {{/error}}
+    require(['core/pending'], function(Pending) {
+        const errorMessageDiv = document.getElementById('loginerrormessage');
+        const infoMessageDiv = document.getElementById('logininfomessage');
+        const errorMessage = errorMessageDiv?.textContent.trim();
+        const infoMessage = infoMessageDiv?.textContent.trim();
+        if (errorMessage || infoMessage) {
+            const pendingJS = new Pending('login-move-focus');
+            const usernameField = document.getElementById('username');
+            setTimeout(function() {
+                if (errorMessage && usernameField) {
+                    usernameField.focus();
+                }
+                if (errorMessage) {
+                    errorMessageDiv.innerHTML += "&nbsp;";
+                }
+                if (infoMessage) {
+                    infoMessageDiv.innerHTML += "&nbsp;";
+                }
+                pendingJS.resolve();
+            }, 500);
+        }
+    });
+    {{#togglepassword}}
+        require(['core/togglesensitive'], function(ToggleSensitive) {
+            ToggleSensitive.init("password", {{smallscreensonly}});
+        });
+    {{/togglepassword}}
+    require(['core_form/submit'], function(Submit) {
+        Submit.init("loginbtn");
+        {{#canloginasguest}}
+            Submit.init("loginguestbtn");
+        {{/canloginasguest}}
+    });
+{{/js}}
+

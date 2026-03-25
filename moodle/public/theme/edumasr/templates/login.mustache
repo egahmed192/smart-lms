@@ -8,21 +8,205 @@
 <body {{{ bodyattributes }}}>
 {{> core/local/toast/wrapper}}
 
-<div id="page-wrapper" class="edumasr-login-wrapper">
+{{! Redesign shell only: no login logic changes. }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "on-tertiary-fixed-variant": "#5b3e00",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#9c3f00",
+                    "surface-variant": "#dddddd",
+                    "inverse-surface": "#0e0e0e",
+                    "on-primary-fixed": "#000000",
+                    "error-dim": "#b92902",
+                    "primary-fixed": "#ff7a2f",
+                    "tertiary-container": "#f7b21f",
+                    "tertiary-fixed-dim": "#e7a407",
+                    "surface-container-high": "#e2e2e2",
+                    "surface-container": "#e8e8e8",
+                    "on-tertiary-container": "#4f3600",
+                    "tertiary-fixed": "#f7b21f",
+                    "on-secondary-fixed": "#403f3f",
+                    "on-surface": "#2f2f2f",
+                    "surface-container-low": "#f1f1f1",
+                    "on-secondary-container": "#525151",
+                    "on-primary-container": "#401500",
+                    "on-secondary": "#f5f2f1",
+                    "primary-container": "#ff7a2f",
+                    "surface": "#f6f6f6",
+                    "on-tertiary-fixed": "#342200",
+                    "on-surface-variant": "#5b5b5b",
+                    "error-container": "#f95630",
+                    "primary-fixed-dim": "#f66700",
+                    "on-error-container": "#520c00",
+                    "surface-dim": "#d4d4d4",
+                    "surface-tint": "#9c3f00",
+                    "surface-container-highest": "#dddddd",
+                    "tertiary": "#7a5400",
+                    "secondary": "#5c5b5b",
+                    "primary-dim": "#893600",
+                    "on-secondary-fixed-variant": "#5c5b5b",
+                    "on-primary": "#fff0ea",
+                    "secondary-container": "#e5e2e1",
+                    "on-background": "#2f2f2f",
+                    "secondary-fixed-dim": "#d6d4d3",
+                    "inverse-primary": "#fe6b00",
+                    "background": "#f6f6f6",
+                    "inverse-on-surface": "#9d9d9d",
+                    "on-tertiary": "#fff1df",
+                    "outline": "#777777",
+                    "tertiary-dim": "#6b4900",
+                    "secondary-dim": "#504f4f",
+                    "outline-variant": "#adadad",
+                    "on-error": "#ffefec",
+                    "error": "#b02500",
+                    "secondary-fixed": "#e5e2e1",
+                    "surface-bright": "#f6f6f6",
+                    "on-primary-fixed-variant": "#4f1c00"
+                },
+                fontFamily: {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+                },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+        },
+    }
+</script>
+<style>
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .bg-glass {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+    }
+    .primary-gradient {
+        background: linear-gradient(135deg, #9c3f00 0%, #ff7a2f 100%);
+    }
+
+    /* Force Moodle default forgot-password/login mform inputs to match edumasr login UI. */
+    .pagelayout-login .mform input[type="text"],
+    .pagelayout-login .mform input[type="email"],
+    .pagelayout-login .mform input[type="password"],
+    .pagelayout-login .mform select,
+    .pagelayout-login .mform textarea,
+    .pagelayout-login .mform .form-control,
+    .pagelayout-login .mform input[size] {
+        width: 100% !important;
+        max-width: none !important;
+        display: block !important;
+        padding: 1.1rem 1rem !important;
+        border-radius: 0.75rem !important;
+        background-color: #f1f1f1 !important;
+        border-color: transparent !important;
+        color: #2f2f2f !important;
+        font-size: 1.05rem !important;
+        line-height: 1.35 !important;
+        box-shadow: none !important;
+        transition: box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease;
+        box-sizing: border-box !important;
+    }
+
+    .pagelayout-login .mform input[type="text"]:focus,
+    .pagelayout-login .mform input[type="email"]:focus,
+    .pagelayout-login .mform input[type="password"]:focus,
+    .pagelayout-login .mform select:focus,
+    .pagelayout-login .mform textarea:focus,
+    .pagelayout-login .mform .form-control:focus {
+        outline: none !important;
+        border-color: rgba(156, 63, 0, 0.4) !important;
+        box-shadow: 0 0 0 4px rgba(156, 63, 0, 0.08) !important;
+    }
+
+    .pagelayout-login .mform .fcontainer,
+    .pagelayout-login .mform .fitem,
+    .pagelayout-login .mform .felement,
+    .pagelayout-login .mform .form-group {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    /* Enhanced submit button design for login-layout mforms (e.g. forgot password). */
+    .pagelayout-login .mform input[type="submit"],
+    .pagelayout-login .mform button[type="submit"],
+    .pagelayout-login .mform .btn-primary {
+        width: 100% !important;
+        border: 0 !important;
+        border-radius: 9999px !important;
+        padding: 0.9rem 1.25rem !important;
+        font-weight: 800 !important;
+        font-size: 1rem !important;
+        letter-spacing: 0.01em;
+        color: #fff !important;
+        background: linear-gradient(135deg, #9c3f00 0%, #ff7a2f 55%, #f7b21f 120%) !important;
+        box-shadow: 0 12px 30px rgba(156, 63, 0, 0.18) !important;
+        transition: transform 140ms ease, box-shadow 160ms ease, filter 160ms ease;
+        cursor: pointer;
+    }
+
+    .pagelayout-login .mform input[type="submit"]:hover,
+    .pagelayout-login .mform button[type="submit"]:hover,
+    .pagelayout-login .mform .btn-primary:hover {
+        filter: saturate(1.05) brightness(1.02);
+        box-shadow: 0 16px 38px rgba(156, 63, 0, 0.22) !important;
+    }
+
+    .pagelayout-login .mform input[type="submit"]:active,
+    .pagelayout-login .mform button[type="submit"]:active,
+    .pagelayout-login .mform .btn-primary:active {
+        transform: translateY(1px) scale(0.99);
+        box-shadow: 0 10px 24px rgba(156, 63, 0, 0.18) !important;
+    }
+
+    .pagelayout-login .mform input[type="submit"]:focus-visible,
+    .pagelayout-login .mform button[type="submit"]:focus-visible,
+    .pagelayout-login .mform .btn-primary:focus-visible {
+        outline: none !important;
+        box-shadow:
+            0 0 0 4px rgba(156, 63, 0, 0.16),
+            0 14px 34px rgba(156, 63, 0, 0.22) !important;
+    }
+</style>
+
+<div id="page-wrapper" class="edumasr-login-wrapper bg-background font-body text-on-surface">
 
     {{{ output.standard_top_of_body_html }}}
 
-    <div id="page" class="container-fluid pt-5">
-        <div id="page-content" class="row justify-content-center">
-            <div class="col-12 col-md-6 col-lg-5">
-                <div class="edumasr-login-card card shadow-sm border-0">
-                    <div class="card-body p-5">
-                        {{{ output.main_content }}}
-                    </div>
-                </div>
+    <main class="relative min-h-screen w-full flex items-stretch overflow-hidden">
+        <div class="hidden lg:flex lg:w-3/5 xl:w-3/5 relative items-end p-16">
+            <div class="absolute inset-0 z-0">
+                <img alt="" class="w-full h-full object-cover" data-alt="Modern minimalist university architecture at sunset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBryjCUeEMe4qbPHCksVYAgHRQH980WvApct4qpsDoSNogRW1uJTIYtEpl30MKrFOlsLzJcGTSZlU5iAF55lonLzLYF7s521_Dzo_T_Nuwho0vNszXfuKVOtZTA_F9wM3yqD0vXBffdhGzyYn9ON1qJwdTfI6mx5khVl4H19koL4lMCv7A68TottGNIocxClYLur0lEPBoRoezon-QcfvwyVXy74ekhoEzMODN-tTDIysarIfy1wpsvZAawLPwu8Ze1IhKrZx_gtUDg"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-on-primary-fixed/60 via-transparent to-transparent"></div>
+            </div>
+            <div class="relative z-10">
+                <h1 class="font-headline text-5xl text-white font-extrabold leading-tight mb-4 tracking-tight">
+                    Moodle LMS
+                </h1>
+                <p class="text-white/90 text-xl font-body max-w-xl leading-relaxed">
+                    Elevating the digital classroom into a high-performance environment for the modern scholar.
+                </p>
             </div>
         </div>
-    </div>
+
+        <div class="w-full lg:w-2/5 xl:w-2/5 bg-surface-container-lowest flex flex-col justify-center px-8 sm:px-12 md:px-16 py-12 shadow-2xl z-20">
+            <div class="w-full">
+                {{{ output.main_content }}}
+            </div>
+        </div>
+
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-48 right-8 w-64 h-64 bg-tertiary/10 rounded-full blur-3xl pointer-events-none"></div>
+    </main>
     {{> theme_boost/footer }}
 </div>
 
